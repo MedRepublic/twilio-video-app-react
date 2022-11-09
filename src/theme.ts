@@ -44,8 +44,8 @@ export default createTheme({
       root: {
         borderRadius: '4px',
         textTransform: 'none',
-        color: 'rgb(40, 42, 43)',
-        fontSize: '0.9rem',
+        color: '#2E5BFF',
+        fontSize: '1.2rem',
         transition: defaultTheme.transitions.create(['background-color', 'box-shadow', 'border', 'color'], {
           duration: defaultTheme.transitions.duration.short,
         }),
@@ -72,12 +72,12 @@ export default createTheme({
     MuiTypography: {
       body1: {
         color: 'rgb(40, 42, 43)',
-        fontSize: '0.9rem',
+        fontSize: '1.2rem',
       },
     },
     MuiInputBase: {
       root: {
-        fontSize: '0.9rem',
+        fontSize: '1.2rem',
       },
     },
     MuiSelect: {
@@ -117,7 +117,7 @@ export default createTheme({
       main: '#027AC5',
     },
   },
-  brand: '#E22525',
+  brand: '#2E5BFF',
   footerHeight: 72,
   mobileFooterHeight: 56,
   sidebarWidth: 300,

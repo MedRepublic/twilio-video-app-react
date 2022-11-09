@@ -105,7 +105,7 @@ export default function Menu(props: { buttonClassName?: string }) {
           </MenuItem>
         )}
 
-        {roomType !== 'peer-to-peer' && roomType !== 'go' && (
+        {/* {roomType !== 'peer-to-peer' && roomType !== 'go' && (
           <MenuItem
             disabled={isFetching}
             onClick={() => {
@@ -121,9 +121,9 @@ export default function Menu(props: { buttonClassName?: string }) {
             <IconContainer>{isRecording ? <StopRecordingIcon /> : <StartRecordingIcon />}</IconContainer>
             <Typography variant="body1">{isRecording ? 'Stop' : 'Start'} Recording</Typography>
           </MenuItem>
-        )}
+        )} */}
 
-        <MenuItem
+        {/* <MenuItem
           onClick={() => {
             VideoRoomMonitor.toggleMonitor();
             setMenuOpen(false);
@@ -133,7 +133,7 @@ export default function Menu(props: { buttonClassName?: string }) {
             <SearchIcon style={{ fill: '#707578', width: '0.9em' }} />
           </IconContainer>
           <Typography variant="body1">Room Monitor</Typography>
-        </MenuItem>
+        </MenuItem> */}
 
         <MenuItem
           onClick={() => {
@@ -151,20 +151,20 @@ export default function Menu(props: { buttonClassName?: string }) {
           <Typography variant="body1">{isGalleryViewActive ? 'Speaker View' : 'Gallery View'}</Typography>
         </MenuItem>
 
-        <MenuItem onClick={() => setAboutOpen(true)}>
+        {/* <MenuItem onClick={() => setAboutOpen(true)}>
           <IconContainer>
             <InfoIconOutlined />
           </IconContainer>
           <Typography variant="body1">About</Typography>
-        </MenuItem>
+        </MenuItem> */}
       </MenuContainer>
-      <AboutDialog
+      {/* <AboutDialog
         open={aboutOpen}
         onClose={() => {
           setAboutOpen(false);
           setMenuOpen(false);
         }}
-      />
+      /> */}
       <DeviceSelectionDialog
         open={settingsOpen}
         onClose={() => {

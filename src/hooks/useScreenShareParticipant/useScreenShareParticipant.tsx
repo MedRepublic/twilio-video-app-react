@@ -9,11 +9,13 @@ import { Participant, TrackPublication } from 'twilio-video';
 */
 export default function useScreenShareParticipant() {
   const { room } = useVideoContext();
+  // console.log(room)
   const [screenShareParticipant, setScreenShareParticipant] = useState<Participant>();
 
   useEffect(() => {
     if (room) {
       const updateScreenShareParticipant = () => {
+        console.log(room.participants.values());
         setScreenShareParticipant(
           Array.from<Participant>(room.participants.values())
             // the screenshare participant could be the localParticipant

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { makeStyles, Typography, Grid, Button, Theme, Hidden } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import LocalVideoPreview from './LocalVideoPreview/LocalVideoPreview';
@@ -9,7 +9,13 @@ import ToggleVideoButton from '../../Buttons/ToggleVideoButton/ToggleVideoButton
 import { useAppState } from '../../../state';
 import useChatContext from '../../../hooks/useChatContext/useChatContext';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
+import Snackbar from '../../Snackbar/Snackbar';
+import axios from 'axios';
+import { Participant } from '../../Participant/Participant';
 
+enum Snackbars {
+  none,
+}
 const useStyles = makeStyles((theme: Theme) => ({
   gutterBottom: {
     marginBottom: '1em',
@@ -57,18 +63,60 @@ interface DeviceSelectionScreenProps {
   roomName: string;
   setStep: (step: Steps) => void;
 }
+type CreateUserResponse = {
+  name: string;
+  job: string;
+  id: string;
+  createdAt: string;
+};
 
 export default function DeviceSelectionScreen({ name, roomName, setStep }: DeviceSelectionScreenProps) {
   const classes = useStyles();
+  const [activeSnackbar, setActiveSnackbar] = useState(Snackbars.none);
   const { getToken, isFetching } = useAppState();
   const { connect: chatConnect } = useChatContext();
   const { connect: videoConnect, isAcquiringLocalTracks, isConnecting } = useVideoContext();
   const disableButtons = isFetching || isAcquiringLocalTracks || isConnecting;
 
+  const backendApi = async (name: string, roomName: string) => {
+    try {
+      // 👇️ const data: CreateUserResponse
+      const { data } = await axios.post<CreateUserResponse>(
+        '/api/users',
+        { name, roomName },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+        }
+      );
+
+      console.log(JSON.stringify(data, null, 4));
+
+      return data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log('error message: ', error.message);
+        // 👇️ error: AxiosError<any, any>
+        return error.message;
+      } else {
+        console.log('unexpected error: ', error);
+        return 'An unexpected error occurred';
+      }
+    }
+  };
   const handleJoin = () => {
-    getToken(name, roomName).then(({ token }) => {
+    getToken(name, roomName).then(async ({ token }) => {
+      console.log(name, roomName, token, 'name, roomName, token');
+      console.log(name.includes('Unauthorized'));
+      // if (name.includes("Unauthorized")) {
+      //   const data = await backendApi(name, roomName)
+      //   console.log(data);
+      // } else {
       videoConnect(token);
       process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && chatConnect(token);
+      // }
     });
   };
 
@@ -107,7 +155,7 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
           </div>
         </Grid>
         <Grid item md={5} sm={12} xs={12}>
-          <Grid container direction="column" justifyContent="space-between" style={{ height: '100%' }}>
+          <Grid container direction="column" justifyContent="space-between" style={{ height: '80%' }}>
             <div>
               <Hidden smDown>
                 <ToggleAudioButton className={classes.deviceButton} disabled={disableButtons} />

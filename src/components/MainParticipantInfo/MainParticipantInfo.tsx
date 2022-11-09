@@ -159,7 +159,7 @@ export default function MainParticipantInfo({ participant, children }: MainParti
           </div>
           <NetworkQualityLevel participant={participant} />
         </div>
-        {isRecording && (
+        {/* {isRecording && (
           <Tooltip
             title="All participants' audio and video is currently being recorded. Visit the app settings to stop recording."
             placement="top"
@@ -171,7 +171,7 @@ export default function MainParticipantInfo({ participant, children }: MainParti
               </Typography>
             </div>
           </Tooltip>
-        )}
+        )} */}
       </div>
       {(!isVideoEnabled || isVideoSwitchedOff) && (
         <div className={classes.avatarContainer}>

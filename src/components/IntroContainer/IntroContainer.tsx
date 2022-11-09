@@ -1,8 +1,12 @@
 import React from 'react';
-import { makeStyles, Theme, Typography } from '@material-ui/core';
+import {
+  makeStyles,
+  Theme,
+  //  Typography
+} from '@material-ui/core';
 import Swoosh from './swoosh';
-import VideoLogo from './VideoLogo';
-import TwilioLogo from './TwilioLogo';
+// import VideoLogo from './VideoLogo';
+// import TwilioLogo from './TwilioLogo';
 import { useAppState } from '../../state';
 import UserMenu from './UserMenu/UserMenu';
 import { useLocation } from 'react-router-dom';
@@ -100,18 +104,18 @@ const IntroContainer = (props: IntroContainerProps) => {
 
   return (
     <div className={classes.background}>
-      <TwilioLogo className={classes.twilioLogo} />
+      {/* <TwilioLogo className={classes.twilioLogo} /> */}
       {user && location.pathname !== '/login' && <UserMenu />}
       <div className={classes.container}>
         <div className={classes.innerContainer}>
-          <div className={classes.swooshContainer}>
+          {/*  <div className={classes.swooshContainer}>
             <div className={classes.logoContainer}>
-              <VideoLogo />
+      <VideoLogo />
               <Typography variant="h6" className={classes.title}>
                 Twilio Programmable Video
-              </Typography>
+              </Typography> 
             </div>
-          </div>
+          </div>*/}
           <div className={classes.content}>{props.children}</div>
         </div>
       </div>

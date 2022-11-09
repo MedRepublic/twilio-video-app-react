@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "experimentalDecorators": true,
     "target": "es6",
     "lib": ["esnext"],
     "allowJs": true,
@@ -16,7 +17,10 @@
     "noImplicitThis": true,
     "strictNullChecks": true,
     "noFallthroughCasesInSwitch": true,
-    "outDir": "../server-build"
+    "outDir": "../server-build",
+    "sourceMap": true,
+    "emitDecoratorMetadata": true,
   },
   "exclude": ["__tests__"]
+
 }

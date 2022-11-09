@@ -31,6 +31,18 @@ export function fetchToken(
   });
 }
 
+export function fetchTokenEncode(token: string) {
+  return fetch('/token/:token', {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify({
+      token,
+    }),
+  });
+}
+
 export function verifyPasscode(passcode: string) {
   return fetchToken('temp-name', 'temp-room', passcode, false /* create_room */, false /* create_conversation */).then(
     async res => {
@@ -78,7 +90,21 @@ export default function usePasscodeAuth() {
     },
     [user]
   );
-
+  const getTokenEncode = useCallback(
+    (token: string) => {
+      return fetchTokenEncode(token)
+        .then(async res => {
+          if (res.ok) {
+            return res;
+          }
+          const json = await res.json();
+          const errorMessage = getErrorMessage(json.error?.message || res.statusText);
+          throw Error(errorMessage);
+        })
+        .then(res => res.json());
+    },
+    [user]
+  );
   const updateRecordingRules = useCallback(
     async (room_sid, rules) => {
       return fetch('/recordingrules', {
@@ -138,5 +164,5 @@ export default function usePasscodeAuth() {
     return Promise.resolve();
   }, []);
 
-  return { user, isAuthReady, getToken, signIn, signOut, updateRecordingRules };
+  return { user, isAuthReady, getToken, getTokenEncode, signIn, signOut, updateRecordingRules };
 }

@@ -12,6 +12,7 @@ export interface StateContextType {
   error: TwilioError | Error | null;
   setError(error: TwilioError | Error | null): void;
   getToken(name: string, room: string, passcode?: string): Promise<{ room_type: RoomType; token: string }>;
+  getTokenEncode(token: string): Promise<{ name: string; room_type: RoomType; token: string }>;
   user?: User | null | { displayName: undefined; photoURL: undefined; passcode?: string };
   signIn?(passcode?: string): Promise<void>;
   signOut?(): Promise<void>;
@@ -138,7 +139,21 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
         return Promise.reject(err);
       });
   };
-
+  const getTokenEncode: StateContextType['getTokenEncode'] = token => {
+    setIsFetching(true);
+    return contextValue
+      .getTokenEncode(token)
+      .then(res => {
+        setRoomType(res.room_type);
+        setIsFetching(false);
+        return res;
+      })
+      .catch(err => {
+        setError(err);
+        setIsFetching(false);
+        return Promise.reject(err);
+      });
+  };
   const updateRecordingRules: StateContextType['updateRecordingRules'] = (room_sid, rules) => {
     setIsFetching(true);
     return contextValue

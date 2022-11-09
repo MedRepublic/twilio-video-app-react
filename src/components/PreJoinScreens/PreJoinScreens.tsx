@@ -1,3 +1,4 @@
+import jwt_decode from 'jwt-decode';
 import React, { useState, useEffect, FormEvent } from 'react';
 import DeviceSelectionScreen from './DeviceSelectionScreen/DeviceSelectionScreen';
 import IntroContainer from '../IntroContainer/IntroContainer';
@@ -16,19 +17,35 @@ export default function PreJoinScreens() {
   const { user } = useAppState();
   const { getAudioAndVideoTracks } = useVideoContext();
   const { URLRoomName } = useParams<{ URLRoomName?: string }>();
+  const { token } = useParams<{ token?: string }>();
+  const { userName } = useParams<{ userName?: string }>();
   const [step, setStep] = useState(Steps.roomNameStep);
 
-  const [name, setName] = useState<string>(user?.displayName || '');
+  const [name, setName] = useState<string>(userName + '(Unauthorized)' || user?.displayName + '(Unauthorized)' || '');
   const [roomName, setRoomName] = useState<string>('');
 
   const [mediaError, setMediaError] = useState<Error>();
 
   useEffect(() => {
+    if (token) {
+      let decoded: any = jwt_decode(token);
+      console.log(decoded);
+      if (decoded.room) {
+        setRoomName(decoded?.room);
+      }
+      if (decoded?.name) {
+        setName(decoded?.name);
+        setStep(Steps.deviceSelectionStep);
+      }
+    }
     if (URLRoomName) {
       setRoomName(URLRoomName);
       if (user?.displayName) {
         setStep(Steps.deviceSelectionStep);
       }
+    }
+    if (userName && URLRoomName) {
+      setStep(Steps.deviceSelectionStep);
     }
   }, [user, URLRoomName]);
 
@@ -47,7 +64,11 @@ export default function PreJoinScreens() {
     // If this app is deployed as a twilio function, don't change the URL because routing isn't supported.
     // @ts-ignore
     if (!window.location.origin.includes('twil.io') && !window.STORYBOOK_ENV) {
-      window.history.replaceState(null, '', window.encodeURI(`/room/${roomName}${window.location.search || ''}`));
+      window.history.replaceState(
+        null,
+        '',
+        window.encodeURI(`/room/${roomName}${window.location.search || ''}/user/${name}`)
+      );
     }
     setStep(Steps.deviceSelectionStep);
   };

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 
 import Button from '@material-ui/core/Button';
@@ -48,8 +48,8 @@ const useStyles = makeStyles((theme: Theme) =>
         border: `2px solid ${theme.brand}`,
         margin: '0 2em',
         '&:hover': {
-          color: '#600101',
-          border: `2px solid #600101`,
+          color: '#2E5BFF',
+          border: `2px solid #2E5BFF`,
           background: '#FFE9E7',
         },
       },
@@ -70,6 +70,9 @@ export default function MenuBar() {
   const isReconnecting = roomState === 'reconnecting';
   const { room } = useVideoContext();
   const participants = useParticipants();
+  useEffect(() => {
+    console.log(participants, 'here');
+  }, [participants]);
 
   return (
     <>
