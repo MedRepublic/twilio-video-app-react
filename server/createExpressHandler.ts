@@ -27,10 +27,8 @@ const context: ServerlessContext = {
 
 export function createExpressHandler(serverlessFunction: ServerlessFunction) {
   return (req: Request, res: Response) => {
-    console.log(req.body, context)
     serverlessFunction(context, req.body, (_, serverlessResponse) => {
       const { statusCode, headers, body } = serverlessResponse;
-
       res
         .status(statusCode)
         .set(headers)
@@ -42,7 +40,6 @@ export function createExpressHandler(serverlessFunction: ServerlessFunction) {
 export async function twilioNotification(serverlessFunction: ServerlessFunction) {
   // console.log("test")
   try {
-
     // await twilioClient.notify.v1.services('IS370b45527f4b4cbb8ea1608d2cd4de62')
     //   .bindings
     //   .create({

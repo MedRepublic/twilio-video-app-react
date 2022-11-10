@@ -13,9 +13,6 @@ import Snackbar from '../../Snackbar/Snackbar';
 import axios from 'axios';
 import { Participant } from '../../Participant/Participant';
 
-enum Snackbars {
-  none,
-}
 const useStyles = makeStyles((theme: Theme) => ({
   gutterBottom: {
     marginBottom: '1em',
@@ -61,6 +58,8 @@ const useStyles = makeStyles((theme: Theme) => ({
 interface DeviceSelectionScreenProps {
   name: string;
   roomName: string;
+  snackError: boolean;
+  snackSetError: (snackError: boolean) => void;
   setStep: (step: Steps) => void;
 }
 type CreateUserResponse = {
@@ -72,8 +71,11 @@ type CreateUserResponse = {
 
 export default function DeviceSelectionScreen({ name, roomName, setStep }: DeviceSelectionScreenProps) {
   const classes = useStyles();
-  const [activeSnackbar, setActiveSnackbar] = useState(Snackbars.none);
+  // const [activeSnackbar, setActiveSnackbar] = useState(Snackbars.none);
   const { getToken, isFetching } = useAppState();
+  const [snackError, snackSetError] = useState(false);
+  // const
+  const { createRoom, isFetchingCreateRoom } = useAppState();
   const { connect: chatConnect } = useChatContext();
   const { connect: videoConnect, isAcquiringLocalTracks, isConnecting } = useVideoContext();
   const disableButtons = isFetching || isAcquiringLocalTracks || isConnecting;
@@ -107,17 +109,39 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
     }
   };
   const handleJoin = () => {
-    getToken(name, roomName).then(async ({ token }) => {
-      console.log(name, roomName, token, 'name, roomName, token');
-      console.log(name.includes('Unauthorized'));
-      // if (name.includes("Unauthorized")) {
-      //   const data = await backendApi(name, roomName)
-      //   console.log(data);
-      // } else {
-      videoConnect(token);
-      process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && chatConnect(token);
-      // }
-    });
+    if (name.includes('Unauthorized')) {
+      createRoom(name, roomName).then(async ({ data }) => {
+        if (data?.inRoomAdded) {
+          console.log(data);
+          getToken(name, roomName).then(async ({ token }) => {
+            console.log(name, roomName, token, 'name, roomName, token');
+            console.log(name.includes('Unauthorized'));
+
+            // videoConnect(token);
+            // process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && chatConnect(token);
+          });
+          // }
+        }
+      });
+    } else {
+      createRoom(name, roomName).then(async ({ data }) => {
+        if (data?.inRoomAdded) {
+          console.log(data);
+
+          getToken(name, roomName).then(async ({ token }) => {
+            console.log(name, roomName, token, 'name, roomName, token');
+            console.log(name.includes('Unauthorized'));
+
+            videoConnect(token);
+            process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && chatConnect(token);
+          });
+          // }
+        } else {
+          console.log(!Boolean(data?.inRoomAdded));
+          snackSetError(!Boolean(data?.inRoomAdded));
+        }
+      });
+    }
   };
 
   if (isFetching || isConnecting) {
@@ -137,6 +161,13 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
 
   return (
     <>
+      <Snackbar
+        open={snackError}
+        headline="Error"
+        message="You have not permission to enter the room"
+        variant="error"
+        handleClose={() => snackSetError(!snackError)}
+      />
       <Typography variant="h5" className={classes.gutterBottom}>
         Join {roomName}
       </Typography>

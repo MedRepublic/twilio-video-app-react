@@ -53,6 +53,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 export default function Snackbar({ headline, message, variant, open, handleClose }: SnackbarProps) {
+  console.log(headline, message, variant, open);
   const classes = useStyles();
 
   const handleOnClose = (_: React.SyntheticEvent | React.MouseEvent, reason?: string) => {

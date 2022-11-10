@@ -12,12 +12,20 @@ export interface StateContextType {
   error: TwilioError | Error | null;
   setError(error: TwilioError | Error | null): void;
   getToken(name: string, room: string, passcode?: string): Promise<{ room_type: RoomType; token: string }>;
+  createRoom(
+    name: string,
+    room: string,
+    passcode?: string
+  ): Promise<{ room_type: RoomType; token: string; data: { inRoomAdded: boolean } }>;
+  getRoomUndefined(room: string): Promise<{ room_type: RoomType; token: string; data: { inRoomAdded: boolean } }>;
   getTokenEncode(token: string): Promise<{ name: string; room_type: RoomType; token: string }>;
   user?: User | null | { displayName: undefined; photoURL: undefined; passcode?: string };
   signIn?(passcode?: string): Promise<void>;
   signOut?(): Promise<void>;
   isAuthReady?: boolean;
   isFetching: boolean;
+  isFetchingCreateRoom: boolean;
+  isFetchingRoomUndefined: boolean;
   activeSinkId: string;
   setActiveSinkId(sinkId: string): void;
   settings: Settings;
@@ -44,6 +52,8 @@ export const StateContext = createContext<StateContextType>(null!);
 export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   const [error, setError] = useState<TwilioError | null>(null);
   const [isFetching, setIsFetching] = useState(false);
+  const [isFetchingCreateRoom, setIsFetchingCreateRoom] = useState(false);
+  const [isFetchingRoomUndefined, setIsFetchingRoomUndefined] = useState(false);
   const [isGalleryViewActive, setIsGalleryViewActive] = useLocalStorageState('gallery-view-active-key', true);
   const [activeSinkId, setActiveSinkId] = useActiveSinkId();
   const [settings, dispatchSetting] = useReducer(settingsReducer, initialSettings);
@@ -57,6 +67,8 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
     error,
     setError,
     isFetching,
+    isFetchingCreateRoom,
+    isFetchingRoomUndefined,
     activeSinkId,
     setActiveSinkId,
     settings,
@@ -116,7 +128,48 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
               recordingError.code = jsonResponse.error?.code;
               return Promise.reject(recordingError);
             }
+            return jsonResponse;
+          })
+          .catch(err => setError(err));
+      },
+      createRoom: async (name, room) => {
+        const endpoint = process.env.REACT_APP_TOKEN_ENDPOINT || '/room/token';
+        return fetch(endpoint, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ name, room }),
+          method: 'POST',
+        })
+          .then(async res => {
+            const jsonResponse = await res.json();
 
+            if (!res.ok) {
+              const roomError = new Error(jsonResponse.error?.message || 'There was an error to create room');
+              roomError.code = jsonResponse.error?.code;
+              return Promise.reject(roomError);
+            }
+            return jsonResponse;
+          })
+          .catch(err => setError(err));
+      },
+      getRoomUndefined: async room => {
+        const endpoint = process.env.REACT_APP_TOKEN_ENDPOINT || '/room/token';
+        return fetch(endpoint, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ name, room }),
+          method: 'POST',
+        })
+          .then(async res => {
+            const jsonResponse = await res.json();
+
+            if (!res.ok) {
+              const roomError = new Error(jsonResponse.error?.message || 'There was an error to create room');
+              roomError.code = jsonResponse.error?.code;
+              return Promise.reject(roomError);
+            }
             return jsonResponse;
           })
           .catch(err => setError(err));
@@ -168,9 +221,39 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
         return Promise.reject(err);
       });
   };
+  const createRoom: StateContextType['createRoom'] = (room, name) => {
+    setIsFetchingCreateRoom(true);
+    return contextValue
+      .createRoom(room, name)
+      .then(res => {
+        setIsFetchingCreateRoom(false);
+        return res;
+      })
+      .catch(err => {
+        setError(err);
+        setIsFetchingCreateRoom(false);
+        return Promise.reject(err);
+      });
+  };
 
+  const getRoomUndefined: StateContextType['getRoomUndefined'] = room => {
+    setIsFetchingRoomUndefined(true);
+    return contextValue
+      .getRoomUndefined(room)
+      .then(res => {
+        setIsFetchingCreateRoom(false);
+        return res;
+      })
+      .catch(err => {
+        setError(err);
+        setIsFetchingCreateRoom(false);
+        return Promise.reject(err);
+      });
+  };
   return (
-    <StateContext.Provider value={{ ...contextValue, getToken, updateRecordingRules }}>
+    <StateContext.Provider
+      value={{ ...contextValue, getToken, updateRecordingRules, getTokenEncode, createRoom, getRoomUndefined }}
+    >
       {props.children}
     </StateContext.Provider>
   );

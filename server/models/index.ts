@@ -1,7 +1,7 @@
 import { Table, Model, Column, DataType } from "sequelize-typescript";
 
 @Table({
-  timestamps: false,
+  timestamps: true,
   tableName: "rooms",
 })
 export class Room extends Model {
@@ -20,7 +20,7 @@ export class Room extends Model {
   @Column({
     type: DataType.BOOLEAN,
     allowNull: true,
-    defaultValue: true,
+    defaultValue: false,
   })
   inRoomAdded!: boolean;
 }

@@ -1,4 +1,4 @@
-import sign from 'jwt-encode';
+
 import './bootstrap-globals';
 import { createExpressHandler, twilioNotification } from './createExpressHandler';
 import express, { RequestHandler } from 'express';
@@ -29,20 +29,8 @@ const authMiddleware =
 app.all('/token', authMiddleware, tokenEndpoint);
 app.all('/recordingrules', authMiddleware, recordingRulesEndpoint);
 app.get('/notification',authMiddleware, twilioNotification)
-app.use('/test', require('./routes'))
-app.get('/token/:token', authMiddleware, (req, res, next) => {
-  try {
-    const secret = 'secret';
-    const data = {
-      room: '1234567890',
-      name: 'John Doe' + Date.now(),
-    };
-    const jwt = sign(data, secret);
-    res.status(200).json({ status: 200, data: jwt, message: 'User token' })
-  } catch (error) {
-    throw error;
-  }
-})
+app.use('/room', require('./routes'))
+
 
 app.use((req, res, next) => {
   // Here we add Cache-Control headers in accordance with the create-react-app best practices.

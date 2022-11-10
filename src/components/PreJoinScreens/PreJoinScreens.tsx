@@ -25,6 +25,7 @@ export default function PreJoinScreens() {
   const [roomName, setRoomName] = useState<string>('');
 
   const [mediaError, setMediaError] = useState<Error>();
+  const [snackError, snackSetError] = useState<Boolean>(false);
 
   useEffect(() => {
     if (token) {
@@ -87,7 +88,13 @@ export default function PreJoinScreens() {
       )}
 
       {step === Steps.deviceSelectionStep && (
-        <DeviceSelectionScreen name={name} roomName={roomName} setStep={setStep} />
+        <DeviceSelectionScreen
+          name={name}
+          roomName={roomName}
+          snackError={false}
+          setStep={setStep}
+          snackSetError={snackSetError}
+        />
       )}
     </IntroContainer>
   );
