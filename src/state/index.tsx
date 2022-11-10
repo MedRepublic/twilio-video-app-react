@@ -17,7 +17,22 @@ export interface StateContextType {
     room: string,
     passcode?: string
   ): Promise<{ room_type: RoomType; token: string; data: { inRoomAdded: boolean } }>;
-  getRoomUndefined(room: string): Promise<{ room_type: RoomType; token: string; data: { inRoomAdded: boolean } }>;
+  getRoomUndefined(
+    room: string
+  ): Promise<{
+    room_type: RoomType;
+    token: string;
+    data: [
+      {
+        createdAt: Date;
+        id: number;
+        inRoomAdded: boolean;
+        roomName: string;
+        updatedAt: string;
+        userName: string;
+      }
+    ];
+  }>;
   getTokenEncode(token: string): Promise<{ name: string; room_type: RoomType; token: string }>;
   user?: User | null | { displayName: undefined; photoURL: undefined; passcode?: string };
   signIn?(passcode?: string): Promise<void>;
@@ -154,13 +169,13 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
           .catch(err => setError(err));
       },
       getRoomUndefined: async room => {
-        const endpoint = process.env.REACT_APP_TOKEN_ENDPOINT || '/room/token';
+        const endpoint = process.env.REACT_APP_TOKEN_ENDPOINT || '/room/request/' + room;
         return fetch(endpoint, {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ name, room }),
-          method: 'POST',
+          // body: JSON.stringify({ room }),
+          method: 'GET',
         })
           .then(async res => {
             const jsonResponse = await res.json();

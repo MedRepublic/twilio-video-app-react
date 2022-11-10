@@ -12,6 +12,7 @@ import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
 import Snackbar from '../../Snackbar/Snackbar';
 import axios from 'axios';
 import { Participant } from '../../Participant/Participant';
+import AlertDialogSlide from '../../DiaglogBox/DialogBox';
 
 const useStyles = makeStyles((theme: Theme) => ({
   gutterBottom: {
@@ -80,34 +81,34 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
   const { connect: videoConnect, isAcquiringLocalTracks, isConnecting } = useVideoContext();
   const disableButtons = isFetching || isAcquiringLocalTracks || isConnecting;
 
-  const backendApi = async (name: string, roomName: string) => {
-    try {
-      // 👇️ const data: CreateUserResponse
-      const { data } = await axios.post<CreateUserResponse>(
-        '/api/users',
-        { name, roomName },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-          },
-        }
-      );
+  // const backendApi = async (name: string, roomName: string) => {
+  //   try {
+  //     // 👇️ const data: CreateUserResponse
+  //     const { data } = await axios.post<CreateUserResponse>(
+  //       '/api/users',
+  //       { name, roomName },
+  //       {
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           Accept: 'application/json',
+  //         },
+  //       }
+  //     );
 
-      console.log(JSON.stringify(data, null, 4));
+  //     console.log(JSON.stringify(data, null, 4));
 
-      return data;
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log('error message: ', error.message);
-        // 👇️ error: AxiosError<any, any>
-        return error.message;
-      } else {
-        console.log('unexpected error: ', error);
-        return 'An unexpected error occurred';
-      }
-    }
-  };
+  //     return data;
+  //   } catch (error) {
+  //     if (axios.isAxiosError(error)) {
+  //       console.log('error message: ', error.message);
+  //       // 👇️ error: AxiosError<any, any>
+  //       return error.message;
+  //     } else {
+  //       console.log('unexpected error: ', error);
+  //       return 'An unexpected error occurred';
+  //     }
+  //   }
+  // };
   const handleJoin = () => {
     if (name.includes('Unauthorized')) {
       createRoom(name, roomName).then(async ({ data }) => {
@@ -161,10 +162,11 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
 
   return (
     <>
+      {/* <AlertDialogSlide /> */}
       <Snackbar
         open={snackError}
-        headline="Error"
-        message="You have not permission to enter the room"
+        headline="Process..."
+        message="Your request has been sent to enter the room"
         variant="error"
         handleClose={() => snackSetError(!snackError)}
       />

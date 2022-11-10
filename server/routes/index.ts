@@ -23,6 +23,15 @@ router.get('/room/:roomName', async (req, res) => {
         res.status(400).json({ status: 400, data: null, message: error })
     }
 })
+
+router.get('/request/:roomName', async (req, res) => {
+    try {
+        const data: Room[] = await Room.findAll({ where: { roomName: req.params.roomName, inRoomAdded:false } });
+        res.status(200).json({ status: 200, message: "test", data })
+    } catch (error) {
+        res.status(400).json({ status: 400, data: null, message: error })
+    }
+})
 router.get('/user/:userName', async (req, res) => {
     try {
         const data: Room[] = await Room.findAll({ where: { userName: req.params.userName } });
@@ -69,6 +78,26 @@ router.post('/token', async (req, res, next) => {
             res.status(200).json({ status: 200, data: { jwt, ...checkExistRoom.toJSON() }, message: 'User token' })
         }
         } catch (error) {
+        throw error;
+    }
+})
+
+router.delete('/room/:id',async(req, res, next)=>{
+    try {
+        const data:Room |null = await Room.findByPk(req.params.id)
+        await Room.destroy({where:{id: req.params.id}})
+        res.status(200).json({ status: 200, data, message: 'Request deleted successfully' })
+    } catch (error) {
+        throw error;
+    }
+})
+
+router.put('/roomRequest/:id',async(req, res, next)=>{
+    try {
+        await Room.update({inRoomAdded:true},{where:{id: req.params.id}})
+        const data:Room |null = await Room.findByPk(req.params.id)
+        res.status(200).json({ status: 200, data, message: 'Request deleted successfully' })
+    } catch (error) {
         throw error;
     }
 })
