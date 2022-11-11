@@ -75,11 +75,15 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
   // const [activeSnackbar, setActiveSnackbar] = useState(Snackbars.none);
   const { getToken, isFetching } = useAppState();
   const [snackError, snackSetError] = useState(false);
+  const [waitingError, setWaitingError] = useState(false);
   // const
-  const { createRoom, isFetchingCreateRoom } = useAppState();
+  const { createRoom, userRoomDetial, isFetchingCreateRoom } = useAppState();
+  const [newProcess, setProcess] = useState(0);
   const { connect: chatConnect } = useChatContext();
   const { connect: videoConnect, isAcquiringLocalTracks, isConnecting } = useVideoContext();
   const disableButtons = isFetching || isAcquiringLocalTracks || isConnecting;
+  const [roomUserId, setRoomUserId] = useState(0);
+  const [inRoomAdded, setInRoomAdded] = useState(false);
 
   // const backendApi = async (name: string, roomName: string) => {
   //   try {
@@ -109,42 +113,105 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
   //     }
   //   }
   // };
-  const handleJoin = () => {
+  const handleJoin = async () => {
     if (name.includes('Unauthorized')) {
-      createRoom(name, roomName).then(async ({ data }) => {
-        if (data?.inRoomAdded) {
-          console.log(data);
-          getToken(name, roomName).then(async ({ token }) => {
-            console.log(name, roomName, token, 'name, roomName, token');
-            console.log(name.includes('Unauthorized'));
-
-            // videoConnect(token);
-            // process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && chatConnect(token);
-          });
-          // }
-        }
-      });
+      createRoom(name, roomName)
+        .then(async ({ data }) => {
+          if (data.inRoomAdded) {
+            // console.log(data);
+            setInRoomAdded(true);
+            // }
+          } else {
+            setWaitingError(true);
+            // console.log(data.id)
+            setInRoomAdded(false);
+            setRoomUserId(data.id);
+          }
+        })
+        .catch(err => setRoomUserId(0));
     } else {
-      createRoom(name, roomName).then(async ({ data }) => {
-        if (data?.inRoomAdded) {
-          console.log(data);
-
-          getToken(name, roomName).then(async ({ token }) => {
-            console.log(name, roomName, token, 'name, roomName, token');
-            console.log(name.includes('Unauthorized'));
-
-            videoConnect(token);
-            process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && chatConnect(token);
-          });
-          // }
-        } else {
-          console.log(!Boolean(data?.inRoomAdded));
-          snackSetError(!Boolean(data?.inRoomAdded));
-        }
-      });
+      await createRoom(name, roomName)
+        .then(async ({ data }) => {
+          if (data.inRoomAdded) {
+            // console.log(data);
+            setInRoomAdded(true);
+            // }
+          } else {
+            setWaitingError(true);
+            // console.log(data.id)
+            setInRoomAdded(false);
+            setRoomUserId(data.id);
+          }
+        })
+        .catch(err => setRoomUserId(0));
     }
   };
+  const userParticipant = async () => {
+    if (roomUserId) {
+      if (name.includes('Unauthorized')) {
+        userRoomDetial(name, roomName)
+          .then(async ({ data }) => {
+            if (data.inRoomAdded) {
+              // console.log(data);
+              setInRoomAdded(true);
+              // }
+            } else {
+              // console.log(data.id)
+              setInRoomAdded(false);
+              setRoomUserId(data.id);
+            }
+          })
+          .catch(err => setRoomUserId(0));
+      } else {
+        userRoomDetial(name, roomName)
+          .then(async ({ data }) => {
+            if (data.inRoomAdded) {
+              // console.log(data);
+              setInRoomAdded(true);
+              // }
+            } else {
+              // console.log(data.id)
+              setInRoomAdded(false);
+              setRoomUserId(data.id);
+            }
+          })
+          .catch(err => setRoomUserId(0));
+      }
+    }
+  };
+  useEffect(() => {
+    roomUndefined();
+  });
+  useEffect(() => {
+    if (inRoomAdded) {
+      generateToken();
+    }
+  }, [inRoomAdded]);
+  const generateToken = () => {
+    getToken(name, roomName).then(async ({ token }) => {
+      // console.log(name, roomName, token, 'name, roomName, token');
+      // console.log(name.includes('Unauthorized'));
+      await videoConnect(token);
+      process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && chatConnect(token);
+      setRoomUserId(0);
+    });
+  };
+  // console.log(count)
+  const roomUndefined = () => {
+    // console.log(room?.name);
+    if (roomUserId) {
+      setTimeout(async () => {
+        setProcess(newProcess + 1);
+        if (roomUserId) {
+          await userParticipant();
+        }
+        // console.log(roomUserId)
+      }, 10000);
+    }
 
+    // console.log('here')
+  };
+  // console.log(newProcess)
   if (isFetching || isConnecting) {
     return (
       <Grid container justifyContent="center" alignItems="center" direction="column" style={{ height: '100%' }}>
@@ -164,12 +231,19 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
     <>
       {/* <AlertDialogSlide /> */}
       <Snackbar
+        open={waitingError}
+        headline="Wait..."
+        message="Waiting for organizer to connect you"
+        variant="error"
+        handleClose={() => setWaitingError(!waitingError)}
+      />
+      {/* <Snackbar
         open={snackError}
         headline="Process..."
         message="Your request has been sent to enter the room"
         variant="error"
         handleClose={() => snackSetError(!snackError)}
-      />
+      /> */}
       <Typography variant="h5" className={classes.gutterBottom}>
         Join {roomName}
       </Typography>

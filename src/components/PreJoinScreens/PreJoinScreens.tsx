@@ -18,10 +18,10 @@ export default function PreJoinScreens() {
   const { getAudioAndVideoTracks } = useVideoContext();
   const { URLRoomName } = useParams<{ URLRoomName?: string }>();
   const { token } = useParams<{ token?: string }>();
-  const { userName } = useParams<{ userName?: string }>();
+  // const { userName } = useParams<{ userName?: string }>();
   const [step, setStep] = useState(Steps.roomNameStep);
 
-  const [name, setName] = useState<string>(userName + '(Unauthorized)' || user?.displayName + '(Unauthorized)' || '');
+  const [name, setName] = useState<string>(user?.displayName || '');
   const [roomName, setRoomName] = useState<string>('');
 
   const [mediaError, setMediaError] = useState<Error>();
@@ -30,7 +30,7 @@ export default function PreJoinScreens() {
   useEffect(() => {
     if (token) {
       let decoded: any = jwt_decode(token);
-      console.log(decoded);
+      // console.log(decoded);
       if (decoded.room) {
         setRoomName(decoded?.room);
       }
@@ -41,11 +41,12 @@ export default function PreJoinScreens() {
     }
     if (URLRoomName) {
       setRoomName(URLRoomName);
-      if (user?.displayName) {
-        setStep(Steps.deviceSelectionStep);
-      }
+      // if (user?.displayName) {
+      //   setStep(Steps.deviceSelectionStep);
+      // }
     }
-    if (userName && URLRoomName) {
+    if (user?.displayName && roomName) {
+      setName(user?.displayName);
       setStep(Steps.deviceSelectionStep);
     }
   }, [user, URLRoomName]);
@@ -65,11 +66,7 @@ export default function PreJoinScreens() {
     // If this app is deployed as a twilio function, don't change the URL because routing isn't supported.
     // @ts-ignore
     if (!window.location.origin.includes('twil.io') && !window.STORYBOOK_ENV) {
-      window.history.replaceState(
-        null,
-        '',
-        window.encodeURI(`/room/${roomName}${window.location.search || ''}/user/${name}`)
-      );
+      window.history.replaceState(null, '', window.encodeURI(`/room/${roomName}${window.location.search || ''}`));
     }
     setStep(Steps.deviceSelectionStep);
   };

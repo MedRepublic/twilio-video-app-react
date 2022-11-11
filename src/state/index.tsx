@@ -16,7 +16,33 @@ export interface StateContextType {
     name: string,
     room: string,
     passcode?: string
-  ): Promise<{ room_type: RoomType; token: string; data: { inRoomAdded: boolean } }>;
+  ): Promise<{
+    room_type: RoomType;
+    token: string;
+    data: {
+      createdAt: Date;
+      id: number;
+      inRoomAdded: boolean;
+      roomName: string;
+      updatedAt: Date;
+      userName: string;
+    };
+  }>;
+  userRoomDetial(
+    name: string,
+    room: string
+  ): Promise<{
+    room_type: RoomType;
+    token: string;
+    data: {
+      createdAt: Date;
+      id: number;
+      inRoomAdded: boolean;
+      roomName: string;
+      updatedAt: Date;
+      userName: string;
+    };
+  }>;
   getRoomUndefined(
     room: string
   ): Promise<{
@@ -28,7 +54,39 @@ export interface StateContextType {
         id: number;
         inRoomAdded: boolean;
         roomName: string;
-        updatedAt: string;
+        updatedAt: Date;
+        userName: string;
+      }
+    ];
+  }>;
+  acceptRequest(
+    room: string
+  ): Promise<{
+    room_type: RoomType;
+    token: string;
+    data: [
+      {
+        createdAt: Date;
+        id: number;
+        inRoomAdded: boolean;
+        roomName: string;
+        updatedAt: Date;
+        userName: string;
+      }
+    ];
+  }>;
+  rejectRequest(
+    room: string
+  ): Promise<{
+    room_type: RoomType;
+    token: string;
+    data: [
+      {
+        createdAt: Date;
+        id: number;
+        inRoomAdded: boolean;
+        roomName: string;
+        updatedAt: Date;
         userName: string;
       }
     ];
@@ -168,6 +226,28 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
           })
           .catch(err => setError(err));
       },
+      userRoomDetial: async (name, room) => {
+        const endpoint = process.env.REACT_APP_TOKEN_ENDPOINT || '/room/detail';
+        return fetch(endpoint, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ name, room }),
+          method: 'POST',
+        })
+          .then(async res => {
+            const jsonResponse = await res.json();
+
+            if (!res.ok) {
+              const roomError = new Error(jsonResponse.error?.message || 'Your connection request was not accepted');
+              console.log(roomError);
+              roomError.code = jsonResponse.error?.code;
+              return Promise.reject(roomError);
+            }
+            return jsonResponse;
+          })
+          .catch(err => setError(err));
+      },
       getRoomUndefined: async room => {
         const endpoint = process.env.REACT_APP_TOKEN_ENDPOINT || '/room/request/' + room;
         return fetch(endpoint, {
@@ -181,7 +261,49 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
             const jsonResponse = await res.json();
 
             if (!res.ok) {
-              const roomError = new Error(jsonResponse.error?.message || 'There was an error to create room');
+              const roomError = new Error(jsonResponse.error?.message || 'Something went wrong...');
+              roomError.code = jsonResponse.error?.code;
+              return Promise.reject(roomError);
+            }
+            return jsonResponse;
+          })
+          .catch(err => setError(err));
+      },
+      acceptRequest: async roomId => {
+        const endpoint = process.env.REACT_APP_TOKEN_ENDPOINT || '/room/roomRequest/' + roomId;
+        return fetch(endpoint, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          // body: JSON.stringify({ room }),
+          method: 'PUT',
+        })
+          .then(async res => {
+            const jsonResponse = await res.json();
+
+            if (!res.ok) {
+              const roomError = new Error(jsonResponse.error?.message || 'Your connection request was not accepted');
+              roomError.code = jsonResponse.error?.code;
+              return Promise.reject(roomError);
+            }
+            return jsonResponse;
+          })
+          .catch(err => setError(err));
+      },
+      rejectRequest: async roomId => {
+        const endpoint = process.env.REACT_APP_TOKEN_ENDPOINT || '/room/deleteRequest/' + roomId;
+        return fetch(endpoint, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          // body: JSON.stringify({ room }),
+          method: 'DELETE',
+        })
+          .then(async res => {
+            const jsonResponse = await res.json();
+
+            if (!res.ok) {
+              const roomError = new Error(jsonResponse.error?.message || 'Your connection request was not rejected');
               roomError.code = jsonResponse.error?.code;
               return Promise.reject(roomError);
             }
@@ -251,6 +373,20 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
       });
   };
 
+  const userRoomDetial: StateContextType['userRoomDetial'] = (room, name) => {
+    setIsFetchingCreateRoom(true);
+    return contextValue
+      .userRoomDetial(room, name)
+      .then(res => {
+        setIsFetchingCreateRoom(false);
+        return res;
+      })
+      .catch(err => {
+        setError(err);
+        setIsFetchingCreateRoom(false);
+        return Promise.reject(err);
+      });
+  };
   const getRoomUndefined: StateContextType['getRoomUndefined'] = room => {
     setIsFetchingRoomUndefined(true);
     return contextValue
@@ -265,9 +401,49 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
         return Promise.reject(err);
       });
   };
+  const acceptRequest: StateContextType['acceptRequest'] = room => {
+    setIsFetchingRoomUndefined(true);
+    return contextValue
+      .acceptRequest(room)
+      .then(res => {
+        setIsFetchingCreateRoom(false);
+        return res;
+      })
+      .catch(err => {
+        setError(err);
+        setIsFetchingCreateRoom(false);
+        return Promise.reject(err);
+      });
+  };
+
+  const rejectRequest: StateContextType['rejectRequest'] = room => {
+    setIsFetchingRoomUndefined(true);
+    return contextValue
+      .rejectRequest(room)
+      .then(res => {
+        setIsFetchingCreateRoom(false);
+        return res;
+      })
+      .catch(err => {
+        setError(err);
+        setIsFetchingCreateRoom(false);
+        return Promise.reject(err);
+      });
+  };
+
   return (
     <StateContext.Provider
-      value={{ ...contextValue, getToken, updateRecordingRules, getTokenEncode, createRoom, getRoomUndefined }}
+      value={{
+        ...contextValue,
+        getToken,
+        updateRecordingRules,
+        getTokenEncode,
+        userRoomDetial,
+        createRoom,
+        getRoomUndefined,
+        acceptRequest,
+        rejectRequest,
+      }}
     >
       {props.children}
     </StateContext.Provider>

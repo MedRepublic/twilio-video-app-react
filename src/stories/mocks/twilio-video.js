@@ -7,7 +7,7 @@ navigator.mediaDevices.enumerateDevices = () => Promise.resolve([]);
 
 const oldFetch = window.fetch;
 window.fetch = (...args) => {
-  console.log(args);
+  // console.log(args);
   if (args[0] === '/token') {
     return Promise.resolve({
       ok: true,

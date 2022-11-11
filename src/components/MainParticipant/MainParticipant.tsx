@@ -17,7 +17,7 @@ import { useAppState } from '../../state';
 export default function MainParticipant() {
   const mainParticipant = useMainParticipant();
   const { room } = useVideoContext();
-  const { getRoomUndefined, isFetchingRoomUndefined } = useAppState();
+  const { getRoomUndefined, acceptRequest, rejectRequest, isFetchingRoomUndefined } = useAppState();
   const localParticipant = room!.localParticipant;
   const [selectedParticipant] = useSelectedParticipant();
   const screenShareParticipant = useScreenShareParticipant();
@@ -29,14 +29,14 @@ export default function MainParticipant() {
   });
   // console.log(count)
   const roomUndefined = () => {
-    console.log(room?.name);
+    // console.log(room?.name);
     setTimeout(() => {
       setProcess(process + 1);
       if (room?.name)
         getRoomUndefined(room?.name).then(async ({ data }) => {
-          console.log(data, count);
+          // console.log(data, count);
           // if (data?.inRoomAdded) {
-          if (data[0]?.id != count[0]?.id) {
+          if (data[0]?.id !== count[0]?.id) {
             setCount(data);
             if (data.length) {
               setOpen(true);
@@ -50,8 +50,8 @@ export default function MainParticipant() {
     }, 5000);
     // console.log('here')
   };
-  console.log(count);
-  console.log(process);
+  // console.log(count);
+  // console.log(process);
   const Transition = React.forwardRef(function Transition(
     props: TransitionProps & {
       children: React.ReactElement<any, any>;
@@ -66,12 +66,35 @@ export default function MainParticipant() {
       ? 'high'
       : null;
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
+  const handleCloseAgree = () => {
+    // console.log('trigger Agree');
+    acceptRequest(count[0]?.id).then(async ({ data }) => {
+      if (data) {
+        setOpen(false);
+      }
+      // console.log(data, count);
+      // if (data?.inRoomAdded) {
+      // if (data[0]?.id !== count[0]?.id) {
+      //   setCount(data);
+      //   if (data.length) {
+      //     setOpen(true);
+      //   } else {
+      //     setOpen(false);
+      //   }
+      // }
 
-  const handleClose = () => {
-    console.log('trigger');
+      // }
+    });
+    // setOpen(false);
+  };
+  const handleCloseDisagree = () => {
+    // console.log('trigger Disagree');
+    rejectRequest(count[0]?.id).then(async ({ data }) => {
+      if (data) {
+        setOpen(false);
+      }
+      // }
+    });
     setOpen(false);
   };
   return (
@@ -79,24 +102,30 @@ export default function MainParticipant() {
        is already being rendered in the <ParticipantStrip /> component.  */
     <>
       {' '}
-      <div>
-        <Dialog
-          open={open}
-          TransitionComponent={Transition}
-          keepMounted
-          onClose={handleClose}
-          aria-describedby="alert-dialog-slide-description"
-        >
-          <DialogTitle>{'Someone want to join room'}</DialogTitle>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-slide-description">Are you sure to Join that person?</DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose}>Disagree</Button>
-            <Button onClick={handleClose}>Agree</Button>
-          </DialogActions>
-        </Dialog>
-      </div>
+      {count.length ? (
+        <div>
+          <Dialog
+            open={open}
+            TransitionComponent={Transition}
+            keepMounted
+            onClose={handleCloseDisagree}
+            aria-describedby="alert-dialog-slide-description"
+          >
+            <DialogTitle>{'Someone want to join room'}</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-slide-description">
+                <b>{count[0].userName}</b> has request to join this call
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseDisagree}>Disagree</Button>
+              <Button onClick={handleCloseAgree}>Agree</Button>
+            </DialogActions>
+          </Dialog>
+        </div>
+      ) : (
+        ''
+      )}
       <MainParticipantInfo participant={mainParticipant}>
         <ParticipantTracks
           participant={mainParticipant}

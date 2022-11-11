@@ -85,6 +85,7 @@ export default function RoomNameScreen({ name, roomName, setName, setRoomName, h
               id="input-room-name"
               variant="outlined"
               fullWidth
+              disabled
               size="small"
               value={roomName}
               onChange={handleRoomNameChange}
