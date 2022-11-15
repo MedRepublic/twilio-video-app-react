@@ -24,9 +24,9 @@ export default function MainParticipant() {
   const [open, setOpen] = React.useState(false);
   const [count, setCount] = useState<any>([]);
   const [process, setProcess] = useState(1);
-  useEffect(() => {
-    roomUndefined();
-  });
+  // useEffect(() => {
+  //   roomUndefined();
+  // });
   // console.log(count)
   const roomUndefined = () => {
     // console.log(room?.name);

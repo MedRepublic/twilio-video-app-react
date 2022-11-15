@@ -41,19 +41,19 @@ export const ReactApp = () => (
       <Router>
         <AppStateProvider>
           <Switch>
-            <PrivateRoute exact path="/">
+            <Route exact path="/">
               <VideoApp />
-            </PrivateRoute>
-            <PrivateRoute path="/room/:URLRoomName">
+            </Route>
+            <Route path="/room/:URLRoomName">
               <VideoApp />
-            </PrivateRoute>
+            </Route>
             {/* <PrivateRoute path="/room/:URLRoomName/user/:userName">
               <VideoApp />
             </PrivateRoute> */}
 
-            <PrivateRoute path="/token/:token">
+            <Route path="/token/:token">
               <VideoApp />
-            </PrivateRoute>
+            </Route>
             <Route path="/login">
               <LoginPage />
             </Route>

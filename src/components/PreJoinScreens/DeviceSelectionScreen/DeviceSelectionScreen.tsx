@@ -3,6 +3,7 @@ import { makeStyles, Typography, Grid, Button, Theme, Hidden } from '@material-u
 import CircularProgress from '@material-ui/core/CircularProgress';
 import LocalVideoPreview from './LocalVideoPreview/LocalVideoPreview';
 import SettingsMenu from './SettingsMenu/SettingsMenu';
+import { useParams } from 'react-router-dom';
 import { Steps } from '../PreJoinScreens';
 import ToggleAudioButton from '../../Buttons/ToggleAudioButton/ToggleAudioButton';
 import ToggleVideoButton from '../../Buttons/ToggleVideoButton/ToggleVideoButton';
@@ -74,6 +75,7 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
   const classes = useStyles();
   // const [activeSnackbar, setActiveSnackbar] = useState(Snackbars.none);
   const { getToken, isFetching } = useAppState();
+  const { token: jwtToken } = useParams<{ token?: string }>();
   const [snackError, snackSetError] = useState(false);
   const [waitingError, setWaitingError] = useState(false);
   // const
@@ -114,36 +116,43 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
   //   }
   // };
   const handleJoin = async () => {
-    if (name.includes('Unauthorized')) {
-      createRoom(name, roomName)
-        .then(async ({ data }) => {
-          if (data.inRoomAdded) {
-            // console.log(data);
-            setInRoomAdded(true);
-            // }
-          } else {
-            setWaitingError(true);
-            // console.log(data.id)
-            setInRoomAdded(false);
-            setRoomUserId(data.id);
-          }
-        })
-        .catch(err => setRoomUserId(0));
+    if (jwtToken) {
+      // createRoom(name, roomName)
+      //   .then(async ({ data }) => {
+      setInRoomAdded(true);
+      // })
     } else {
-      await createRoom(name, roomName)
-        .then(async ({ data }) => {
-          if (data.inRoomAdded) {
-            // console.log(data);
-            setInRoomAdded(true);
-            // }
-          } else {
-            setWaitingError(true);
-            // console.log(data.id)
-            setInRoomAdded(false);
-            setRoomUserId(data.id);
-          }
-        })
-        .catch(err => setRoomUserId(0));
+      if (name.includes('Unauthorized')) {
+        createRoom(name, roomName)
+          .then(async ({ data }) => {
+            if (data.inRoomAdded) {
+              // console.log(data);
+              setInRoomAdded(true);
+              // }
+            } else {
+              setWaitingError(true);
+              // console.log(data.id)
+              setInRoomAdded(false);
+              setRoomUserId(data.id);
+            }
+          })
+          .catch(err => setRoomUserId(0));
+      } else {
+        await createRoom(name, roomName)
+          .then(async ({ data }) => {
+            if (data.inRoomAdded) {
+              // console.log(data);
+              setInRoomAdded(true);
+              // }
+            } else {
+              setWaitingError(true);
+              // console.log(data.id)
+              setInRoomAdded(false);
+              setRoomUserId(data.id);
+            }
+          })
+          .catch(err => setRoomUserId(0));
+      }
     }
   };
   const userParticipant = async () => {
@@ -179,20 +188,20 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
       }
     }
   };
-  useEffect(() => {
-    roomUndefined();
-  });
+  // useEffect(() => {
+  //   roomUndefined();
+  // });
   useEffect(() => {
     if (inRoomAdded) {
       generateToken();
     }
   }, [inRoomAdded]);
   const generateToken = () => {
-    getToken(name, roomName).then(async ({ token }) => {
+    getToken(name, roomName).then(async ({ token: data }) => {
       // console.log(name, roomName, token, 'name, roomName, token');
       // console.log(name.includes('Unauthorized'));
-      await videoConnect(token);
-      process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && chatConnect(token);
+      await videoConnect(data);
+      process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && chatConnect(data);
       setRoomUserId(0);
     });
   };

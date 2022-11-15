@@ -3,6 +3,7 @@ import './bootstrap-globals';
 import { createExpressHandler, twilioNotification } from './createExpressHandler';
 import express, { RequestHandler } from 'express';
 import path from 'path';
+import morgan from 'morgan';
 import { ServerlessFunction } from './types';
 const Sequelize = require("sequelize");
 import connection from "./helper/sequilize";
@@ -11,6 +12,9 @@ const PORT = process.env.PORT ?? 8081;
 
 const app = express();
 app.use(express.json());
+app.use(morgan('tiny'))
+// app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 
 // This server reuses the serverless endpoints from the "plugin-rtc" Twilio CLI Plugin, which is used when the "npm run deploy:twilio-cli" command is run.
 // The documentation for this endpoint can be found in the README file here: https://github.com/twilio-labs/plugin-rtc
