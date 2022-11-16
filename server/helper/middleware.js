@@ -1,6 +1,6 @@
 function mustBeInteger(req, res, next) {
     const id = req.params.id
-
+    console.log(id)
     if (!Number.isInteger(parseInt(id))) {
         res.status(400).json({ message: 'ID must be an integer' })
     } else {
@@ -9,9 +9,9 @@ function mustBeInteger(req, res, next) {
 }
 
 function checkFieldsPost(req, res, next) {
-    const { roomName, userName, inRoomAdded=false } = req.body
+    const { room, name, inRoomAdded=false } = req.body
 
-    if (roomName && userName && inRoomAdded) {
+    if (room && name) {
         next()
     } else {
         res.status(400).json({ message: 'fields are not good' })

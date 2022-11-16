@@ -24,18 +24,15 @@ export default function MainParticipant() {
   const [open, setOpen] = React.useState(false);
   const [count, setCount] = useState<any>([]);
   const [process, setProcess] = useState(1);
-  // useEffect(() => {
-  //   roomUndefined();
-  // });
-  // console.log(count)
+  useEffect(() => {
+    roomUndefined();
+  });
   const roomUndefined = () => {
     // console.log(room?.name);
     setTimeout(() => {
       setProcess(process + 1);
       if (room?.name)
-        getRoomUndefined(room?.name).then(async ({ data }) => {
-          // console.log(data, count);
-          // if (data?.inRoomAdded) {
+        getRoomUndefined(room?.name, localParticipant?.identity).then(async ({ data }) => {
           if (data[0]?.id !== count[0]?.id) {
             setCount(data);
             if (data.length) {
@@ -68,7 +65,7 @@ export default function MainParticipant() {
 
   const handleCloseAgree = () => {
     // console.log('trigger Agree');
-    acceptRequest(count[0]?.id).then(async ({ data }) => {
+    acceptRequest(count[0]?.id, count[0]?.room, count[0]?.name).then(async ({ data }) => {
       if (data) {
         setOpen(false);
       }

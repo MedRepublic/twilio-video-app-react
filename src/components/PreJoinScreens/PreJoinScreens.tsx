@@ -29,14 +29,21 @@ export default function PreJoinScreens() {
 
   useEffect(() => {
     if (token) {
-      let decoded: any = jwt_decode(token);
-      // console.log(decoded);
-      if (decoded.room) {
-        setRoomName(decoded?.room);
-      }
-      if (decoded?.name) {
-        setName(decoded?.name);
-        setStep(Steps.deviceSelectionStep);
+      try {
+        let decoded: any = jwt_decode(token);
+        console.log(decoded);
+        if (decoded) {
+          console.log('here');
+          if (decoded.room) {
+            setRoomName(decoded?.room);
+          }
+          if (decoded?.name) {
+            setName(decoded?.name);
+            setStep(Steps.deviceSelectionStep);
+          }
+        }
+      } catch (error) {
+        console.error(error);
       }
     }
     if (URLRoomName) {

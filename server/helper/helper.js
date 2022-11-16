@@ -22,20 +22,46 @@ function mustBeInArray(array, id) {
     })
 }
 
-function roomNameAndUserName(array, roomName, userName) {
+function mustBeInArrayName(array, room) {
     return new Promise((resolve, reject) => {
-        const row = array.find(r => r.roomName == roomName && r.userName == userName)
+        const row = array.filter(r => r.room == room && r.inRoomAdded == false)
+        if (!row) {
+            reject({
+                message: 'ID is not good',
+                status: 404
+            })
+        }
+        resolve(row)
+    })
+}
+
+function mustBeInArrayRoomAndName(array, room, name) {
+    return new Promise((resolve, reject) => {
+        const row = array.find(r => r.room == room && r.name == name)
+        if (!row) {
+            reject({
+                message: 'ID is not good',
+                status: 404
+            })
+        }
+        resolve(row)
+    })
+}
+
+function roomNameAndUserName(array, room, name) {
+    return new Promise((resolve, reject) => {
+        const row = array.find(r => r.room == room && r.name == name)
         if (!row) {
             resolve({
                 message: 'room and user is not found',
                 status: 200,
-                data:null
+                data: null
             })
         }
         resolve({
             message: 'room and user is already exist',
             status: 200,
-            data:row
+            data: row
         })
     })
 }
@@ -59,6 +85,8 @@ export default {
     getNewId,
     newDate,
     mustBeInArray,
+    mustBeInArrayName,
+    mustBeInArrayRoomAndName,
     roomNameAndUserName,
     writeJSONFile
 }

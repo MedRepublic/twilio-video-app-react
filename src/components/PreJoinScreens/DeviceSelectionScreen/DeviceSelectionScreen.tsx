@@ -79,7 +79,7 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
   const [snackError, snackSetError] = useState(false);
   const [waitingError, setWaitingError] = useState(false);
   // const
-  const { createRoom, userRoomDetial, isFetchingCreateRoom } = useAppState();
+  const { createRoom, userRoomDetial, rejectRequest, isFetchingCreateRoom } = useAppState();
   const [newProcess, setProcess] = useState(0);
   const { connect: chatConnect } = useChatContext();
   const { connect: videoConnect, isAcquiringLocalTracks, isConnecting } = useVideoContext();
@@ -123,11 +123,15 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
       // })
     } else {
       if (name.includes('Unauthorized')) {
-        createRoom(name, roomName)
+        createRoom(name, roomName, inRoomAdded)
           .then(async ({ data }) => {
             if (data.inRoomAdded) {
               // console.log(data);
-              setInRoomAdded(true);
+              const id = String(data.id);
+              rejectRequest(id)
+                .then(data => setInRoomAdded(true))
+                .catch(err => setRoomUserId(0));
+              // setInRoomAdded(true);
               // }
             } else {
               setWaitingError(true);
@@ -138,11 +142,14 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
           })
           .catch(err => setRoomUserId(0));
       } else {
-        await createRoom(name, roomName)
+        createRoom(name, roomName, inRoomAdded)
           .then(async ({ data }) => {
             if (data.inRoomAdded) {
               // console.log(data);
-              setInRoomAdded(true);
+              const id = String(data.id);
+              rejectRequest(id)
+                .then(data => setInRoomAdded(true))
+                .catch(err => setRoomUserId(0));
               // }
             } else {
               setWaitingError(true);
@@ -188,9 +195,9 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
       }
     }
   };
-  // useEffect(() => {
-  //   roomUndefined();
-  // });
+  useEffect(() => {
+    roomUndefined();
+  });
   useEffect(() => {
     if (inRoomAdded) {
       generateToken();

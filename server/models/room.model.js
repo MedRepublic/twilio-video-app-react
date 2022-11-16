@@ -22,10 +22,26 @@ function getRoom(id) {
     })
 }
 
+function getRoomByName(roomName) {
+    return new Promise((resolve, reject) => {
+        helper.mustBeInArrayName(rooms, roomName)
+            .then(room => resolve(room))
+            .catch(err => reject(err))
+    })
+}
+
+
+function getRoomByRoomAndName(roomName, userName) {
+    return new Promise((resolve, reject) => {
+        helper.mustBeInArrayRoomAndName(rooms, roomName, userName)
+            .then(room => resolve(room))
+            .catch(err => reject(err))
+    })
+}
 function insertRoom(newRoom) {
     // console.log(newRoom)
     return new Promise((resolve, reject) => {
-        helper.roomNameAndUserName(rooms, newRoom.roomName, newRoom.userName)
+        helper.roomNameAndUserName(rooms, newRoom.room, newRoom.name)
             .then(room => {
                 if (room.data) {
                     resolve(room.data)
@@ -67,7 +83,7 @@ function deleteRoom(id) {
     return new Promise((resolve, reject) => {
         helper.mustBeInArray(rooms, id)
             .then(() => {
-                rooms = rooms.filter(p => p.id !== id)
+                rooms = rooms.filter(p => p.id != id);
                 helper.writeJSONFile(filename, rooms)
                 resolve()
             })
@@ -79,6 +95,8 @@ export default {
     insertRoom,
     getRooms,
     getRoom,
+    getRoomByName,
+    getRoomByRoomAndName,
     updateRoom,
     deleteRoom
 }
