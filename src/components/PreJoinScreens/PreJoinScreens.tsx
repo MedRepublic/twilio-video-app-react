@@ -1,4 +1,5 @@
 import jwt_decode from 'jwt-decode';
+import jwt from 'jsonwebtoken';
 import React, { useState, useEffect, FormEvent } from 'react';
 import DeviceSelectionScreen from './DeviceSelectionScreen/DeviceSelectionScreen';
 import IntroContainer from '../IntroContainer/IntroContainer';
@@ -7,12 +8,25 @@ import RoomNameScreen from './RoomNameScreen/RoomNameScreen';
 import { useAppState } from '../../state';
 import { useParams } from 'react-router-dom';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
-
+// const {  verify } = jwt;
 export enum Steps {
   roomNameStep,
   deviceSelectionStep,
 }
-
+function parseJwt(token: any) {
+  var base64Url = token.split('.')[1];
+  var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  var jsonPayload = decodeURIComponent(
+    window
+      .atob(base64)
+      .split('')
+      .map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      })
+      .join('')
+  );
+  return JSON.parse(jsonPayload);
+}
 export default function PreJoinScreens() {
   const { user } = useAppState();
   const { getAudioAndVideoTracks } = useVideoContext();
@@ -26,10 +40,13 @@ export default function PreJoinScreens() {
 
   const [mediaError, setMediaError] = useState<Error>();
   const [snackError, snackSetError] = useState<Boolean>(false);
-
+  const Secret = 'Hello';
   useEffect(() => {
     if (token) {
       try {
+        // let decoded: any = jwt.verify(token, Secret);
+        let code = parseJwt(token);
+        console.log(code);
         let decoded: any = jwt_decode(token);
         console.log(decoded);
         if (decoded) {
@@ -73,7 +90,7 @@ export default function PreJoinScreens() {
     // If this app is deployed as a twilio function, don't change the URL because routing isn't supported.
     // @ts-ignore
     if (!window.location.origin.includes('twil.io') && !window.STORYBOOK_ENV) {
-      window.history.replaceState(null, '', window.encodeURI(`/room/${roomName}${window.location.search || ''}`));
+      window.history.replaceState(null, '', window.encodeURI(`/roomName/${roomName}${window.location.search || ''}`));
     }
     setStep(Steps.deviceSelectionStep);
   };

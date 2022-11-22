@@ -193,6 +193,9 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
           })
           .catch(err => setRoomUserId(0));
       }
+    } else {
+      setInRoomAdded(false);
+      setRoomUserId(0);
     }
   };
   useEffect(() => {
@@ -223,6 +226,8 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
         }
         // console.log(roomUserId)
       }, 10000);
+    } else {
+      setProcess(newProcess + 1);
     }
 
     // console.log('here')

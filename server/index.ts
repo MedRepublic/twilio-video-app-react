@@ -3,14 +3,16 @@ import './bootstrap-globals';
 import { createExpressHandler, twilioNotification } from './createExpressHandler';
 import express, { RequestHandler } from 'express';
 import path from 'path';
+import cors from 'cors';
 import morgan from 'morgan';
 import { ServerlessFunction } from './types';
-const Sequelize = require("sequelize");
-import connection from "./helper/sequilize";
+// const Sequelize = require("sequelize");
+// import connection from "./helper/sequilize";
 // import  SequelizeModel  from './models/index';
 const PORT = process.env.PORT ?? 8081;
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 app.use(morgan('tiny'))
 // app.use(express.json())
@@ -55,20 +57,20 @@ app.get('*', (_, res) => {
   res.set('Cache-Control', 'no-cache');
   res.sendFile(path.join(__dirname, '../build/index.html'), { etag: false, lastModified: false });
 });
-const sequelize = new Sequelize(
-  'test',
-  'root',
-  '',
-  {
-      host: 'localhost',
-      dialect: 'mysql'
-  }
-);
-sequelize.authenticate().then(() => {
-  console.log('Connection has been established successfully.');
-}).catch((error:any) => {
-  console.error('Unable to connect to the database: ', error);
-});
+// const sequelize = new Sequelize(
+//   'test',
+//   'root',
+//   '',
+//   {
+//       host: 'localhost',
+//       dialect: 'mysql'
+//   }
+// );
+// sequelize.authenticate().then(() => {
+//   console.log('Connection has been established successfully.');
+// }).catch((error:any) => {
+//   console.error('Unable to connect to the database: ', error);
+// });
 app.listen(PORT, async() =>{ 
-  await connection.sync({alter:true});
+  // await connection.sync({alter:true});
   console.log(`twilio-video-app-react server running on ${PORT}`)});

@@ -44,7 +44,7 @@ export const ReactApp = () => (
             <Route exact path="/">
               <VideoApp />
             </Route>
-            <Route path="/room/:URLRoomName">
+            <Route path="/roomName/:URLRoomName">
               <VideoApp />
             </Route>
             {/* <PrivateRoute path="/room/:URLRoomName/user/:userName">
@@ -57,7 +57,7 @@ export const ReactApp = () => (
             <Route path="/login">
               <LoginPage />
             </Route>
-            <Redirect to="/room/:URLRoomName" />
+            <Redirect to="/roomName/:URLRoomName" />
           </Switch>
         </AppStateProvider>
       </Router>

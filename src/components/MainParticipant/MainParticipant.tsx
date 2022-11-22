@@ -25,26 +25,51 @@ export default function MainParticipant() {
   const [count, setCount] = useState<any>([]);
   const [process, setProcess] = useState(1);
   useEffect(() => {
-    roomUndefined();
-  });
-  const roomUndefined = () => {
-    // console.log(room?.name);
     setTimeout(() => {
-      setProcess(process + 1);
-      if (room?.name)
-        getRoomUndefined(room?.name, localParticipant?.identity).then(async ({ data }) => {
-          if (data[0]?.id !== count[0]?.id) {
-            setCount(data);
-            if (data.length) {
+      if (!open) {
+        roomUndefined();
+      } else {
+        setProcess(process + 1);
+      }
+    }, 1000);
+
+    console.log('process', process, open);
+  }, [process]);
+  const roomUndefined = async () => {
+    console.log(count, count.length);
+    if (room?.name) {
+      console.log(count.length, 'count.length');
+      console.log(room.name, 'room.name');
+      await getRoomUndefined(room?.name, localParticipant?.identity).then(async ({ data }) => {
+        if (data.length) {
+          console.log(data, data.length, count, 'roomUndefined if');
+          setCount(data);
+          console.log(data.length, count, 'data.length && count[0].id');
+          if (data.length && count.length) {
+            console.log(data.length, count.length, data, count, 'hello');
+            if (open == false) {
               setOpen(true);
             } else {
-              setOpen(false);
+              setProcess(process + 1);
             }
+            //
+          } else {
+            setOpen(false);
+            setProcess(process + 1);
           }
+        } else {
+          console.log(data, data.length, 'roomUndefined flse');
+          // setOpen(false);
+          setProcess(process + 1);
+        }
 
-          // }
-        });
-    }, 5000);
+        // }
+      });
+    } else {
+      setProcess(process + 1);
+    }
+
+    // }, 5000);
     // console.log('here')
   };
   // console.log(count);
@@ -69,6 +94,7 @@ export default function MainParticipant() {
       if (data) {
         setOpen(false);
       }
+      setProcess(process + 1);
       // console.log(data, count);
       // if (data?.inRoomAdded) {
       // if (data[0]?.id !== count[0]?.id) {
@@ -82,6 +108,7 @@ export default function MainParticipant() {
 
       // }
     });
+    setProcess(process + 1);
     // setOpen(false);
   };
   const handleCloseDisagree = () => {
@@ -90,9 +117,11 @@ export default function MainParticipant() {
       if (data) {
         setOpen(false);
       }
+      setProcess(process + 1);
       // }
     });
     setOpen(false);
+    setProcess(process + 1);
   };
   return (
     /* audio is disabled for this participant component because this participant's audio 
@@ -111,12 +140,12 @@ export default function MainParticipant() {
             <DialogTitle>{'Someone want to join room'}</DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-slide-description">
-                <b>{count[0].userName}</b> has request to join this call
+                <b>{count[0].name}</b> has request to join this call
               </DialogContentText>
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleCloseDisagree}>Disagree</Button>
-              <Button onClick={handleCloseAgree}>Agree</Button>
+              <Button onClick={handleCloseDisagree}>Reject</Button>
+              <Button onClick={handleCloseAgree}>Accept</Button>
             </DialogActions>
           </Dialog>
         </div>

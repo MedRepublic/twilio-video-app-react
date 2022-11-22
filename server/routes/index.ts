@@ -4,6 +4,11 @@ import sign from 'jwt-encode';
 import room from "../models/room.model";
 import m from '../helper/middleware'
 const router = express.Router();
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+const client = require('twilio')(accountSid, authToken);
+
+
 
 module.exports = router;
 
@@ -182,13 +187,23 @@ router.get('/:id', m.mustBeInteger, async (req, res) => {
 
 /* Insert a new room */
 router.post('/token', m.checkFieldsPost, async (req, res) => {
-    await room.insertRoom(req.body)
-        .then((room: { id: any; }) => res.status(201).json({
-            status: 200,
-            message: `The room #${room.id} has been created`,
-            data: room
-        }))
-        .catch((err: { message: any; }) => res.status(500).json({ status: 500, data: null, message: err.message }))
+    try {
+        client.video.v1.rooms(req.body.room)
+            .fetch()
+            .then(async (rooms: any) => {
+                console.log(rooms)
+                room.insertRoom(req.body)
+                    .then((room: { id: any; }) => res.status(200).json({
+                        status: 200,
+                        message: `The room #${room.id} has been created`,
+                        data: room
+                    })).catch((err: { message: any; }) => res.status(500).json({ status: 500, data: null, message: err.message }))
+            })
+            .catch((err: any) => res.status(err.status).json({ status: err.status, data: null, message: "This call hasn’t started yet, please wait..." }));
+    } catch (error) {
+        res.status(400).json({ status: 400, data: null, message: error })
+    }
+
 })
 
 /* Update a room */

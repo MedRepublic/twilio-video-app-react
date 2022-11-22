@@ -220,9 +220,9 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
         })
           .then(async res => {
             const jsonResponse = await res.json();
-
+            console.log(jsonResponse);
             if (!res.ok) {
-              const roomError = new Error(jsonResponse.error?.message || 'There was an error to create room');
+              const roomError = new Error(jsonResponse.message || 'There was an error to create room');
               roomError.code = jsonResponse.error?.code;
               return Promise.reject(roomError);
             }
@@ -243,7 +243,7 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
             const jsonResponse = await res.json();
 
             if (!res.ok) {
-              const roomError = new Error(jsonResponse.error?.message || 'Your connection request was not accepted');
+              const roomError = new Error(jsonResponse.message || 'Your connection request was not accepted');
               console.log(roomError);
               roomError.code = jsonResponse.error?.code;
               return Promise.reject(roomError);
@@ -265,7 +265,7 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
             const jsonResponse = await res.json();
 
             if (!res.ok) {
-              const roomError = new Error(jsonResponse.error?.message || 'Something went wrong...');
+              const roomError = new Error(jsonResponse.message || 'Something went wrong...');
               roomError.code = jsonResponse.error?.code;
               return Promise.reject(roomError);
             }
@@ -286,7 +286,7 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
             const jsonResponse = await res.json();
 
             if (!res.ok) {
-              const roomError = new Error(jsonResponse.error?.message || 'Your connection request was not accepted');
+              const roomError = new Error(jsonResponse.message || 'Your connection request was not accepted');
               roomError.code = jsonResponse.error?.code;
               return Promise.reject(roomError);
             }
@@ -308,7 +308,7 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
 
             if (!res.ok) {
               const roomError = new Error(jsonResponse.error?.message || 'Your connection request was not rejected');
-              roomError.code = jsonResponse.error?.code;
+              roomError.code = jsonResponse.code;
               return Promise.reject(roomError);
             }
             return jsonResponse;
