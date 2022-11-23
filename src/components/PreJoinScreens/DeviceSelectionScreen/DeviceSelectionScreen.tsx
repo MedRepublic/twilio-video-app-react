@@ -87,81 +87,38 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
   const [roomUserId, setRoomUserId] = useState(0);
   const [inRoomAdded, setInRoomAdded] = useState(false);
 
-  // const backendApi = async (name: string, roomName: string) => {
-  //   try {
-  //     // 👇️ const data: CreateUserResponse
-  //     const { data } = await axios.post<CreateUserResponse>(
-  //       '/api/users',
-  //       { name, roomName },
-  //       {
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //           Accept: 'application/json',
-  //         },
-  //       }
-  //     );
-
-  //     console.log(JSON.stringify(data, null, 4));
-
-  //     return data;
-  //   } catch (error) {
-  //     if (axios.isAxiosError(error)) {
-  //       console.log('error message: ', error.message);
-  //       // 👇️ error: AxiosError<any, any>
-  //       return error.message;
-  //     } else {
-  //       console.log('unexpected error: ', error);
-  //       return 'An unexpected error occurred';
-  //     }
-  //   }
-  // };
   const handleJoin = async () => {
+    console.log(name, roomName, inRoomAdded);
     if (jwtToken) {
       // createRoom(name, roomName)
       //   .then(async ({ data }) => {
       setInRoomAdded(true);
+      setRoomUserId(0);
       // })
+    } else if (name && roomName && !inRoomAdded) {
+      createRoom(name, roomName, inRoomAdded)
+        .then(async ({ data }) => {
+          if (data.inRoomAdded) {
+            // console.log(data);
+            const id = String(data.id);
+            rejectRequest(id)
+              .then(data => setInRoomAdded(true))
+              .catch(err => setRoomUserId(0));
+            // }
+          } else {
+            setWaitingError(true);
+            // console.log(data.id)
+            setInRoomAdded(false);
+            setRoomUserId(data.id);
+          }
+        })
+        .catch(err => setRoomUserId(0));
     } else {
-      if (name.includes('Unauthorized')) {
-        createRoom(name, roomName, inRoomAdded)
-          .then(async ({ data }) => {
-            if (data.inRoomAdded) {
-              // console.log(data);
-              const id = String(data.id);
-              rejectRequest(id)
-                .then(data => setInRoomAdded(true))
-                .catch(err => setRoomUserId(0));
-              // setInRoomAdded(true);
-              // }
-            } else {
-              setWaitingError(true);
-              // console.log(data.id)
-              setInRoomAdded(false);
-              setRoomUserId(data.id);
-            }
-          })
-          .catch(err => setRoomUserId(0));
-      } else {
-        createRoom(name, roomName, inRoomAdded)
-          .then(async ({ data }) => {
-            if (data.inRoomAdded) {
-              // console.log(data);
-              const id = String(data.id);
-              rejectRequest(id)
-                .then(data => setInRoomAdded(true))
-                .catch(err => setRoomUserId(0));
-              // }
-            } else {
-              setWaitingError(true);
-              // console.log(data.id)
-              setInRoomAdded(false);
-              setRoomUserId(data.id);
-            }
-          })
-          .catch(err => setRoomUserId(0));
-      }
+      setInRoomAdded(false);
+      setRoomUserId(0);
     }
   };
+
   const userParticipant = async () => {
     if (roomUserId) {
       if (name.includes('Unauthorized')) {
@@ -198,14 +155,26 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
       setRoomUserId(0);
     }
   };
+
   useEffect(() => {
-    roomUndefined();
-  });
+    if (roomUserId) {
+      setTimeout(async () => {
+        setProcess(newProcess + 1);
+        if (roomUserId) {
+          await userParticipant();
+        }
+        // console.log(roomUserId)
+      }, 10000);
+    }
+  }, [newProcess]);
   useEffect(() => {
     if (inRoomAdded) {
       generateToken();
+    } else {
+      setProcess(newProcess + 1);
     }
   }, [inRoomAdded]);
+
   const generateToken = () => {
     getToken(name, roomName).then(async ({ token: data }) => {
       // console.log(name, roomName, token, 'name, roomName, token');
@@ -215,24 +184,7 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
       setRoomUserId(0);
     });
   };
-  // console.log(count)
-  const roomUndefined = () => {
-    // console.log(room?.name);
-    if (roomUserId) {
-      setTimeout(async () => {
-        setProcess(newProcess + 1);
-        if (roomUserId) {
-          await userParticipant();
-        }
-        // console.log(roomUserId)
-      }, 10000);
-    } else {
-      setProcess(newProcess + 1);
-    }
 
-    // console.log('here')
-  };
-  // console.log(newProcess)
   if (isFetching || isConnecting) {
     return (
       <Grid container justifyContent="center" alignItems="center" direction="column" style={{ height: '100%' }}>

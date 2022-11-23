@@ -1,5 +1,5 @@
 import jwt_decode from 'jwt-decode';
-import jwt from 'jsonwebtoken';
+// import jwt from 'jsonwebtoken';
 import React, { useState, useEffect, FormEvent } from 'react';
 import DeviceSelectionScreen from './DeviceSelectionScreen/DeviceSelectionScreen';
 import IntroContainer from '../IntroContainer/IntroContainer';
@@ -13,20 +13,20 @@ export enum Steps {
   roomNameStep,
   deviceSelectionStep,
 }
-function parseJwt(token: any) {
-  var base64Url = token.split('.')[1];
-  var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-  var jsonPayload = decodeURIComponent(
-    window
-      .atob(base64)
-      .split('')
-      .map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-      })
-      .join('')
-  );
-  return JSON.parse(jsonPayload);
-}
+// function parseJwt(token: any) {
+//   var base64Url = token.split('.')[1];
+//   var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+//   var jsonPayload = decodeURIComponent(
+//     window
+//       .atob(base64)
+//       .split('')
+//       .map(function(c) {
+//         return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+//       })
+//       .join('')
+//   );
+//   return JSON.parse(jsonPayload);
+// }
 export default function PreJoinScreens() {
   const { user } = useAppState();
   const { getAudioAndVideoTracks } = useVideoContext();
@@ -40,13 +40,13 @@ export default function PreJoinScreens() {
 
   const [mediaError, setMediaError] = useState<Error>();
   const [snackError, snackSetError] = useState<Boolean>(false);
-  const Secret = 'Hello';
+  // const Secret = 'Hello';
   useEffect(() => {
     if (token) {
       try {
         // let decoded: any = jwt.verify(token, Secret);
-        let code = parseJwt(token);
-        console.log(code);
+        // let code = parseJwt(token);
+        // console.log(code);
         let decoded: any = jwt_decode(token);
         console.log(decoded);
         if (decoded) {
