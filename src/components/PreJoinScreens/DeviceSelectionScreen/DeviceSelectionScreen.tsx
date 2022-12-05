@@ -11,9 +11,6 @@ import { useAppState } from '../../../state';
 import useChatContext from '../../../hooks/useChatContext/useChatContext';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
 import Snackbar from '../../Snackbar/Snackbar';
-import axios from 'axios';
-import { Participant } from '../../Participant/Participant';
-import AlertDialogSlide from '../../DiaglogBox/DialogBox';
 
 const useStyles = makeStyles((theme: Theme) => ({
   gutterBottom: {
