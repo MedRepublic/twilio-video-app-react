@@ -71,7 +71,7 @@ export default function Snackbar({ headline, message, variant, open, handleClose
       }}
       open={open}
       onClose={handleOnClose}
-      autoHideDuration={10000}
+      // autoHideDuration={10000}
     >
       <div
         className={clsx(classes.container, {

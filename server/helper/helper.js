@@ -40,7 +40,7 @@ function mustBeInArrayRoomAndName(array, room, name) {
         const row = array.find(r => r.room == room && r.name == name)
         if (!row) {
             reject({
-                message: 'ID is not good',
+                message: 'Room is not found',
                 status: 404
             })
         }

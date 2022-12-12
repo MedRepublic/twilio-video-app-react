@@ -239,7 +239,7 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
             const jsonResponse = await res.json();
 
             if (!res.ok) {
-              const roomError = new Error(jsonResponse.message || 'Your connection request was not accepted');
+              const roomError = new Error('Your connection request was not accepted');
               roomError.code = jsonResponse.error?.code;
               return Promise.reject(roomError);
             }

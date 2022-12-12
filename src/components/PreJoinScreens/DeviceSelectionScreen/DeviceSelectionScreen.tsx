@@ -84,32 +84,17 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
   const disableButtons = isFetching || isAcquiringLocalTracks || isConnecting;
   const [roomUserId, setRoomUserId] = useState(0);
   const [inRoomAdded, setInRoomAdded] = useState(false);
+  const [myProcess, setmyProcess] = useState(false);
 
   const handleJoin = async () => {
+    setProcess(0);
+    setmyProcess(true);
     if (jwtToken) {
       await videoConnect(jwtToken);
       process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && chatConnect(jwtToken);
       setRoomUserId(0);
     } else if (name && roomName && !inRoomAdded) {
-      createRoom(name, roomName, inRoomAdded)
-        .then(async ({ data }) => {
-          if (data) {
-            if (data.inRoomAdded) {
-              const id = String(data.id);
-              rejectRequest(id)
-                .then(data => setInRoomAdded(true))
-                .catch(err => setRoomUserId(0));
-            } else {
-              setWaitingError(true);
-              setInRoomAdded(false);
-              setRoomUserId(data.id);
-            }
-          } else {
-            setCallStartedError(true);
-            setInRoomAdded(false);
-          }
-        })
-        .catch(err => setRoomUserId(0));
+      newCreateRoom(name, roomName, inRoomAdded);
     } else {
       setInRoomAdded(false);
       setRoomUserId(0);
@@ -118,44 +103,53 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
 
   const userParticipant = async () => {
     if (roomUserId) {
-      if (name.includes('Unauthorized')) {
-        userRoomDetial(name, roomName)
-          .then(async ({ data }) => {
-            if (data.inRoomAdded) {
-              setInRoomAdded(true);
-            } else {
-              setInRoomAdded(false);
-              setRoomUserId(data.id);
-            }
-          })
-          .catch(err => setRoomUserId(0));
-      } else {
-        userRoomDetial(name, roomName)
-          .then(async ({ data }) => {
-            if (data.inRoomAdded) {
-              setInRoomAdded(true);
-            } else {
-              setInRoomAdded(false);
-              setRoomUserId(data.id);
-            }
-          })
-          .catch(err => setRoomUserId(0));
-      }
-    } else {
-      setInRoomAdded(false);
-      setRoomUserId(0);
+      userRoomDetial(name, roomName)
+        .then(async ({ data }) => {
+          if (data.inRoomAdded) {
+            setInRoomAdded(true);
+          } else {
+            setInRoomAdded(false);
+            setRoomUserId(data.id);
+          }
+        })
+        .catch(err => setRoomUserId(0));
     }
   };
 
-  useEffect(() => {
-    if (roomUserId) {
-      setTimeout(async () => {
-        setProcess(newProcess + 1);
-        if (roomUserId) {
-          await userParticipant();
+  const newCreateRoom = (name: any, roomName: any, inRoomAdded: any) => {
+    createRoom(name, roomName, inRoomAdded)
+      .then(async ({ data }) => {
+        if (data) {
+          if (data?.inRoomAdded) {
+            const id = String(data.id);
+            rejectRequest(id)
+              .then(data => setInRoomAdded(true))
+              .catch(err => setRoomUserId(0));
+          } else {
+            setWaitingError(true);
+            setInRoomAdded(false);
+            setRoomUserId(data.id);
+          }
+        } else {
+          setCallStartedError(true);
+          setInRoomAdded(false);
+          setRoomUserId(0);
         }
-      }, 10000);
-    }
+      })
+      .catch(err => setRoomUserId(0));
+  };
+
+  useEffect(() => {
+    setTimeout(async () => {
+      setProcess(newProcess + 1);
+      if (roomUserId) {
+        await userParticipant();
+      } else if (callStartedError && myProcess) {
+        newCreateRoom(name, roomName, inRoomAdded);
+      }
+    }, 2000);
+
+    console.log(newProcess, roomUserId, callStartedError, myProcess);
   }, [newProcess]);
   useEffect(() => {
     if (inRoomAdded) {
@@ -203,7 +197,10 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
         headline="Wait..."
         message="This call hasn’t started yet, please wait..."
         variant="error"
-        handleClose={() => setCallStartedError(!callStartedError)}
+        handleClose={() => {
+          setCallStartedError(!callStartedError);
+          setmyProcess(false);
+        }}
       />
       <Typography variant="h5" className={classes.gutterBottom}>
         Join {roomName}
