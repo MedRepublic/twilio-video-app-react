@@ -120,16 +120,11 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
     createRoom(name, roomName, inRoomAdded)
       .then(async ({ data }) => {
         if (data) {
-          if (data?.inRoomAdded) {
-            const id = String(data.id);
-            rejectRequest(id)
-              .then(data => setInRoomAdded(true))
-              .catch(err => setRoomUserId(0));
-          } else {
-            setWaitingError(true);
-            setInRoomAdded(false);
-            setRoomUserId(data.id);
-          }
+          const id = String(data.id);
+          localStorage.setItem('roomId', id);
+          setWaitingError(true);
+          setInRoomAdded(false);
+          setRoomUserId(data.id);
         } else {
           setCallStartedError(true);
           setInRoomAdded(false);
