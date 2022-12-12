@@ -57,20 +57,7 @@ app.get('*', (_, res) => {
   res.set('Cache-Control', 'no-cache');
   res.sendFile(path.join(__dirname, '../build/index.html'), { etag: false, lastModified: false });
 });
-// const sequelize = new Sequelize(
-//   'test',
-//   'root',
-//   '',
-//   {
-//       host: 'localhost',
-//       dialect: 'mysql'
-//   }
-// );
-// sequelize.authenticate().then(() => {
-//   console.log('Connection has been established successfully.');
-// }).catch((error:any) => {
-//   console.error('Unable to connect to the database: ', error);
-// });
+
 app.listen(PORT, async() =>{ 
   // await connection.sync({alter:true});
   console.log(`twilio-video-app-react server running on ${PORT}`)});

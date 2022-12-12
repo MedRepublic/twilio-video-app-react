@@ -73,8 +73,9 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
   // const [activeSnackbar, setActiveSnackbar] = useState(Snackbars.none);
   const { getToken, isFetching } = useAppState();
   const { token: jwtToken } = useParams<{ token?: string }>();
-  const [snackError, snackSetError] = useState(false);
+  // const [snackError, snackSetError] = useState(false);
   const [waitingError, setWaitingError] = useState(false);
+  const [callStartedError, setCallStartedError] = useState(false);
   // const
   const { createRoom, userRoomDetial, rejectRequest, isFetchingCreateRoom } = useAppState();
   const [newProcess, setProcess] = useState(0);
@@ -85,28 +86,27 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
   const [inRoomAdded, setInRoomAdded] = useState(false);
 
   const handleJoin = async () => {
-    console.log(name, roomName, inRoomAdded);
     if (jwtToken) {
-      // createRoom(name, roomName)
-      //   .then(async ({ data }) => {
-      setInRoomAdded(true);
+      await videoConnect(jwtToken);
+      process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && chatConnect(jwtToken);
       setRoomUserId(0);
-      // })
     } else if (name && roomName && !inRoomAdded) {
       createRoom(name, roomName, inRoomAdded)
         .then(async ({ data }) => {
-          if (data.inRoomAdded) {
-            // console.log(data);
-            const id = String(data.id);
-            rejectRequest(id)
-              .then(data => setInRoomAdded(true))
-              .catch(err => setRoomUserId(0));
-            // }
+          if (data) {
+            if (data.inRoomAdded) {
+              const id = String(data.id);
+              rejectRequest(id)
+                .then(data => setInRoomAdded(true))
+                .catch(err => setRoomUserId(0));
+            } else {
+              setWaitingError(true);
+              setInRoomAdded(false);
+              setRoomUserId(data.id);
+            }
           } else {
-            setWaitingError(true);
-            // console.log(data.id)
+            setCallStartedError(true);
             setInRoomAdded(false);
-            setRoomUserId(data.id);
           }
         })
         .catch(err => setRoomUserId(0));
@@ -122,11 +122,8 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
         userRoomDetial(name, roomName)
           .then(async ({ data }) => {
             if (data.inRoomAdded) {
-              // console.log(data);
               setInRoomAdded(true);
-              // }
             } else {
-              // console.log(data.id)
               setInRoomAdded(false);
               setRoomUserId(data.id);
             }
@@ -136,11 +133,8 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
         userRoomDetial(name, roomName)
           .then(async ({ data }) => {
             if (data.inRoomAdded) {
-              // console.log(data);
               setInRoomAdded(true);
-              // }
             } else {
-              // console.log(data.id)
               setInRoomAdded(false);
               setRoomUserId(data.id);
             }
@@ -160,7 +154,6 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
         if (roomUserId) {
           await userParticipant();
         }
-        // console.log(roomUserId)
       }, 10000);
     }
   }, [newProcess]);
@@ -174,8 +167,6 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
 
   const generateToken = () => {
     getToken(name, roomName).then(async ({ token: data }) => {
-      // console.log(name, roomName, token, 'name, roomName, token');
-      // console.log(name.includes('Unauthorized'));
       await videoConnect(data);
       process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && chatConnect(data);
       setRoomUserId(0);
@@ -207,13 +198,13 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
         variant="error"
         handleClose={() => setWaitingError(!waitingError)}
       />
-      {/* <Snackbar
-        open={snackError}
-        headline="Process..."
-        message="Your request has been sent to enter the room"
+      <Snackbar
+        open={callStartedError}
+        headline="Wait..."
+        message="This call hasn’t started yet, please wait..."
         variant="error"
-        handleClose={() => snackSetError(!snackError)}
-      /> */}
+        handleClose={() => setCallStartedError(!callStartedError)}
+      />
       <Typography variant="h5" className={classes.gutterBottom}>
         Join {roomName}
       </Typography>

@@ -78,8 +78,6 @@ async function writeJSONFile(filename, content) {
         })
         resolve()
     })
-    // console.log(fs.existsSync(filename))
-
 }
 export default {
     getNewId,

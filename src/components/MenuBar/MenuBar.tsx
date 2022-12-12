@@ -70,9 +70,6 @@ export default function MenuBar() {
   const isReconnecting = roomState === 'reconnecting';
   const { room } = useVideoContext();
   const participants = useParticipants();
-  // useEffect(() => {
-  //   console.log(participants, 'here');
-  // }, [participants]);
 
   return (
     <>

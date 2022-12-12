@@ -9,7 +9,7 @@ import { Participant, TrackPublication } from 'twilio-video';
 */
 export default function useScreenShareParticipant() {
   const { room } = useVideoContext();
-  // console.log(room)
+
   const [screenShareParticipant, setScreenShareParticipant] = useState<Participant>();
 
   useEffect(() => {

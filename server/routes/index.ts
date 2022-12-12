@@ -1,6 +1,6 @@
 import express from "express";
 import { JsonWebTokenError } from "jsonwebtoken";
-import sign from 'jwt-encode';
+// import sign from 'jwt-encode';
 import room from "../models/room.model";
 import m from '../helper/middleware'
 const router = express.Router();
@@ -191,7 +191,6 @@ router.post('/token', m.checkFieldsPost, async (req, res) => {
         client.video.v1.rooms(req.body.room)
             .fetch()
             .then(async (rooms: any) => {
-                console.log(rooms)
                 room.insertRoom(req.body)
                     .then((room: { id: any; }) => res.status(200).json({
                         status: 200,

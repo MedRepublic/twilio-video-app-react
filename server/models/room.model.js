@@ -39,7 +39,6 @@ function getRoomByRoomAndName(roomName, userName) {
     })
 }
 function insertRoom(newRoom) {
-    // console.log(newRoom)
     return new Promise((resolve, reject) => {
         helper.roomNameAndUserName(rooms, newRoom.room, newRoom.name)
             .then(room => {

@@ -32,21 +32,13 @@ export default function MainParticipant() {
         setProcess(process + 1);
       }
     }, 1000);
-
-    console.log('process', process, open);
   }, [process]);
   const roomUndefined = async () => {
-    console.log(count, count.length);
     if (room?.name) {
-      console.log(count.length, 'count.length');
-      console.log(room.name, 'room.name');
       await getRoomUndefined(room?.name, localParticipant?.identity).then(async ({ data }) => {
         if (data.length) {
-          console.log(data, data.length, count, 'roomUndefined if');
           setCount(data);
-          console.log(data.length, count, 'data.length && count[0].id');
           if (data.length && count.length) {
-            console.log(data.length, count.length, data, count, 'hello');
             if (open == false) {
               setOpen(true);
             } else {
@@ -58,7 +50,6 @@ export default function MainParticipant() {
             setProcess(process + 1);
           }
         } else {
-          console.log(data, data.length, 'roomUndefined flse');
           // setOpen(false);
           setProcess(process + 1);
         }
@@ -68,12 +59,8 @@ export default function MainParticipant() {
     } else {
       setProcess(process + 1);
     }
-
-    // }, 5000);
-    // console.log('here')
   };
-  // console.log(count);
-  // console.log(process);
+
   const Transition = React.forwardRef(function Transition(
     props: TransitionProps & {
       children: React.ReactElement<any, any>;
@@ -89,36 +76,20 @@ export default function MainParticipant() {
       : null;
 
   const handleCloseAgree = () => {
-    // console.log('trigger Agree');
     acceptRequest(count[0]?.id, count[0]?.room, count[0]?.name).then(async ({ data }) => {
       if (data) {
         setOpen(false);
       }
       setProcess(process + 1);
-      // console.log(data, count);
-      // if (data?.inRoomAdded) {
-      // if (data[0]?.id !== count[0]?.id) {
-      //   setCount(data);
-      //   if (data.length) {
-      //     setOpen(true);
-      //   } else {
-      //     setOpen(false);
-      //   }
-      // }
-
-      // }
     });
     setProcess(process + 1);
-    // setOpen(false);
   };
   const handleCloseDisagree = () => {
-    // console.log('trigger Disagree');
     rejectRequest(count[0]?.id).then(async ({ data }) => {
       if (data) {
         setOpen(false);
       }
       setProcess(process + 1);
-      // }
     });
     setOpen(false);
     setProcess(process + 1);

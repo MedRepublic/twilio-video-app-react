@@ -183,8 +183,11 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
             room_name,
             create_conversation: process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true',
           }),
-        }).then(res => res.json());
+        })
+          .then(res => res.json())
+          .catch(err => console.log(err));
       },
+
       updateRecordingRules: async (room_sid, rules) => {
         const endpoint = process.env.REACT_APP_TOKEN_ENDPOINT || '/recordingrules';
 
@@ -219,14 +222,7 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
           method: 'POST',
         })
           .then(async res => {
-            const jsonResponse = await res.json();
-            console.log(jsonResponse);
-            if (!res.ok) {
-              const roomError = new Error(jsonResponse.message || 'There was an error to create room');
-              roomError.code = jsonResponse.error?.code;
-              return Promise.reject(roomError);
-            }
-            return jsonResponse;
+            return await res.json();
           })
           .catch(err => setError(err));
       },
@@ -244,7 +240,6 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
 
             if (!res.ok) {
               const roomError = new Error(jsonResponse.message || 'Your connection request was not accepted');
-              console.log(roomError);
               roomError.code = jsonResponse.error?.code;
               return Promise.reject(roomError);
             }
