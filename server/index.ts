@@ -6,9 +6,6 @@ import path from 'path';
 import cors from 'cors';
 import morgan from 'morgan';
 import { ServerlessFunction } from './types';
-// const Sequelize = require("sequelize");
-// import connection from "./helper/sequilize";
-// import  SequelizeModel  from './models/index';
 const PORT = process.env.PORT ?? 8081;
 
 const app = express();
@@ -22,12 +19,10 @@ app.use(express.urlencoded({ extended: true }))
 // The documentation for this endpoint can be found in the README file here: https://github.com/twilio-labs/plugin-rtc
 const tokenFunction: ServerlessFunction = require('@twilio-labs/plugin-rtc/src/serverless/functions/token').handler;
 const tokenEndpoint = createExpressHandler(tokenFunction);
-const newToken = createExpressHandler(tokenFunction);
 
 const recordingRulesFunction: ServerlessFunction = require('@twilio-labs/plugin-rtc/src/serverless/functions/recordingrules')
   .handler;
 const recordingRulesEndpoint = createExpressHandler(recordingRulesFunction);
-// const notificationNew = createExpressHandler(twilioNotification)
 const noopMiddleware: RequestHandler = (_, __, next) => next();
 const authMiddleware =
   process.env.REACT_APP_SET_AUTH === 'firebase' ? require('./firebaseAuthMiddleware') : noopMiddleware;
