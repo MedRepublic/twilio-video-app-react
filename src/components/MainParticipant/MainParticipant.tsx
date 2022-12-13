@@ -25,40 +25,39 @@ export default function MainParticipant() {
   const [count, setCount] = useState<any>([]);
   const [process, setProcess] = useState(1);
   useEffect(() => {
+    const loginType = sessionStorage.getItem('urlLoginType');
     setTimeout(() => {
-      if (!open) {
-        roomUndefined();
+      console.log(
+        !open && room?.name && !count.length && loginType == 'tokenUser',
+        open,
+        room?.name,
+        count.length,
+        loginType
+      );
+      if (!open && room?.name && !count.length && loginType == 'tokenUser') {
+        roomUndefined(room?.name);
       } else {
         setProcess(process + 1);
       }
     }, 1000);
   }, [process]);
-  const roomUndefined = async () => {
-    if (room?.name) {
-      await getRoomUndefined(room?.name, localParticipant?.identity).then(async ({ data }) => {
-        if (data.length) {
-          setCount(data);
-          if (data.length && count.length) {
-            if (open == false) {
-              setOpen(true);
-            } else {
-              setProcess(process + 1);
-            }
-            //
-          } else {
-            setOpen(false);
-            setProcess(process + 1);
-          }
-        } else {
-          // setOpen(false);
+  const roomUndefined = async (roomName: any) => {
+    await getRoomUndefined(roomName, localParticipant?.identity).then(async ({ data }) => {
+      console.log(data.length, count.length, open, data.length && open === false);
+      if (data.length && open === false) {
+        if (!count) {
           setProcess(process + 1);
+        } else {
+          setCount(data);
+          setOpen(true);
         }
+      } else {
+        setOpen(false);
+        setProcess(process + 1);
+      }
 
-        // }
-      });
-    } else {
-      setProcess(process + 1);
-    }
+      // }
+    });
   };
 
   const Transition = React.forwardRef(function Transition(
@@ -82,6 +81,8 @@ export default function MainParticipant() {
       }
       setProcess(process + 1);
     });
+    setOpen(false);
+    setCount([]);
     setProcess(process + 1);
   };
   const handleCloseDisagree = () => {
@@ -92,6 +93,7 @@ export default function MainParticipant() {
       setProcess(process + 1);
     });
     setOpen(false);
+    setCount([]);
     setProcess(process + 1);
   };
   return (

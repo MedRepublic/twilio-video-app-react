@@ -45,6 +45,7 @@ export default function PreJoinScreens() {
       try {
         let decoded: any = jwt_decode(token);
         if (decoded) {
+          sessionStorage.setItem('urlLoginType', 'tokenUser');
           if (decoded?.grants && decoded?.grants?.video && decoded?.grants?.video?.room) {
             setRoomName(decoded?.grants?.video?.room);
           }
@@ -56,6 +57,8 @@ export default function PreJoinScreens() {
       } catch (error) {
         console.error(error);
       }
+    } else {
+      sessionStorage.setItem('urlLoginType', 'guestUser');
     }
     if (URLRoomName) {
       setRoomName(URLRoomName);
