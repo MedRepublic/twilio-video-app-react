@@ -301,11 +301,11 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
           .then(async res => {
             const jsonResponse = await res.json();
 
-            if (!res.ok) {
-              const roomError = new Error(jsonResponse.error?.message || 'Your connection request was not rejected');
-              roomError.code = jsonResponse.code;
-              return Promise.reject(roomError);
-            }
+            // if (!res.ok) {
+            //   const roomError = new Error(jsonResponse.error?.message || 'Your connection request was not rejected');
+            //   roomError.code = jsonResponse.code;
+            //   return Promise.reject(roomError);
+            // }
             return jsonResponse;
           })
           .catch(err => setError(err));

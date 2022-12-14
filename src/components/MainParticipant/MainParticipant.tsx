@@ -87,6 +87,7 @@ export default function MainParticipant() {
   };
   const handleCloseDisagree = () => {
     rejectRequest(count[0]?.id).then(async ({ data }) => {
+      console.log(data);
       if (data) {
         setOpen(false);
       }

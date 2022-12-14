@@ -155,7 +155,7 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
   }, [inRoomAdded]);
 
   const generateToken = () => {
-    getToken(name, roomName).then(async ({ token: data }) => {
+    getToken(name + '_unAuthorized', roomName).then(async ({ token: data }) => {
       await videoConnect(data);
       process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && chatConnect(data);
       setRoomUserId(0);
