@@ -45,9 +45,13 @@ export default function EndCallButton(props: { className?: string }) {
   }, [roomUser]);
 
   const endCall = async () => {
-    let roomId = localStorage.getItem('roomId');
-    if (roomId) {
-      return await rejectRequest(roomId)
+    let data;
+    if (sessionStorage.getItem('roomDetail')) {
+      let string = sessionStorage.getItem('roomDetail') || '';
+      data = JSON.parse(string);
+    }
+    if (data) {
+      return await rejectRequest(data.id, data.room, data.name, false, '', '')
         .then(data => {
           room!.disconnect();
           return;

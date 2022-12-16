@@ -156,8 +156,8 @@ router.get('/request/:roomName', async (req, res) => {
 
 router.post('/detail', async (req, res) => {
     try {
-        const { room: roomName, name } = req.body;
-        room.getRoomByRoomAndName(roomName, name)
+        const { room: roomName, name, id } = req.body;
+        room.getRoom(id)
             .then((data: any) => res.json({ status: 200, message: "Room detail", data }))
             .catch((err: { status: number; message: any; }) => {
                 if (err.status) {
@@ -208,7 +208,7 @@ router.post('/token', m.checkFieldsPost, async (req, res) => {
 /* Update a room */
 router.put('/roomRequest/:id', m.mustBeInteger, async (req, res) => {
     const id = req.params.id;
-    await room.updateRoom(id, { inRoomAdded: true, ...req.body })
+    await room.updateRoom(id, req.body)
         .then((room: any) => res.json({
             status: 200,
             message: `The room #${id} has been updated`,
@@ -231,6 +231,24 @@ router.put('/roomRequest/:id', m.mustBeInteger, async (req, res) => {
 //         throw error;
 //     }
 // })
+
+/* Delete a room */
+router.delete('/rejectRequest/:id', m.mustBeInteger, async (req, res) => {
+    const id = req.params.id;
+    await room.deleteRoom(id)
+        .then((room: any) => res.json({
+            status: 200,
+            data: null,
+            message: `The room #${id} has been deleted`
+        }))
+        .catch((err: { status: number; message: any; }) => {
+            if (err.status) {
+                res.status(err.status).json({ status: err.status, data: null, message: err.message })
+            }
+            res.status(500).json({ status: 500, data: null, message: err.message })
+        })
+})
+
 /* Delete a room */
 router.delete('/deleteRequest/:id', m.mustBeInteger, async (req, res) => {
     const id = req.params.id;

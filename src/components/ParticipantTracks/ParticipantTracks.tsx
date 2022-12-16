@@ -42,14 +42,16 @@ export default function ParticipantTracks({
   return (
     <>
       {filteredPublications.map(publication => (
-        <Publication
-          key={publication.kind}
-          publication={publication}
-          participant={participant}
-          isLocalParticipant={isLocalParticipant}
-          videoOnly={videoOnly}
-          videoPriority={videoPriority}
-        />
+        <>
+          <Publication
+            key={publication.kind}
+            publication={publication}
+            participant={participant}
+            isLocalParticipant={isLocalParticipant}
+            videoOnly={videoOnly}
+            videoPriority={videoPriority}
+          />
+        </>
       ))}
     </>
   );

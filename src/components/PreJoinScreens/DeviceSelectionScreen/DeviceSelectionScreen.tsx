@@ -1,5 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { TwilioError } from 'twilio-video';
 import { makeStyles, Typography, Grid, Button, Theme, Hidden } from '@material-ui/core';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import { TransitionProps } from '@mui/material/transitions';
+import Slide from '@mui/material/Slide';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import LocalVideoPreview from './LocalVideoPreview/LocalVideoPreview';
 import SettingsMenu from './SettingsMenu/SettingsMenu';
@@ -81,10 +89,13 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
   const [newProcess, setProcess] = useState(0);
   const { connect: chatConnect } = useChatContext();
   const { connect: videoConnect, isAcquiringLocalTracks, isConnecting } = useVideoContext();
-  const disableButtons = isFetching || isAcquiringLocalTracks || isConnecting;
+  const disableButtons = isFetching || isAcquiringLocalTracks || isConnecting || isFetchingCreateRoom;
   const [roomUserId, setRoomUserId] = useState(0);
   const [inRoomAdded, setInRoomAdded] = useState(false);
   const [myProcess, setmyProcess] = useState(false);
+  const [error, setError] = useState<TwilioError | null>(null);
+  const [open, setOpen] = React.useState(false);
+  const [count, setCount] = useState<any>([]);
 
   const handleJoin = async () => {
     setProcess(0);
@@ -103,16 +114,28 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
 
   const userParticipant = async () => {
     if (roomUserId) {
-      userRoomDetial(name, roomName)
+      userRoomDetial(roomUserId)
         .then(async ({ data }) => {
-          if (data.inRoomAdded) {
+          if (data.inRoomAdded == true) {
+            sessionStorage.setItem('roomDetail', JSON.stringify(data));
             setInRoomAdded(true);
+            setProcess(newProcess + 1);
+          } else if (data.inRoomAdded == false) {
+            sessionStorage.setItem('roomDetail', JSON.stringify(data));
+            let array = [data];
+            setCount(array);
+            setOpen(true);
+            setInRoomAdded(false);
+            setRoomUserId(0);
           } else {
             setInRoomAdded(false);
             setRoomUserId(data.id);
+            setProcess(newProcess + 1);
           }
         })
         .catch(err => setRoomUserId(0));
+    } else {
+      setProcess(newProcess + 1);
     }
   };
 
@@ -122,9 +145,11 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
         if (data) {
           const id = String(data.id);
           localStorage.setItem('roomId', id);
+
           setWaitingError(true);
           setInRoomAdded(false);
           setRoomUserId(data.id);
+          setProcess(newProcess + 1);
         } else {
           setCallStartedError(true);
           setInRoomAdded(false);
@@ -135,14 +160,11 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
   };
 
   useEffect(() => {
-    setTimeout(async () => {
-      setProcess(newProcess + 1);
-      if (roomUserId) {
-        await userParticipant();
-      } else if (callStartedError && myProcess) {
-        newCreateRoom(name, roomName, inRoomAdded);
-      }
-    }, 2000);
+    if (roomUserId) {
+      userParticipant();
+    } else if (callStartedError && myProcess) {
+      newCreateRoom(name, roomName, inRoomAdded);
+    }
 
     console.log(newProcess, roomUserId, callStartedError, myProcess);
   }, [newProcess]);
@@ -155,7 +177,12 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
   }, [inRoomAdded]);
 
   const generateToken = () => {
-    getToken(name + '_unAuthorized', roomName).then(async ({ token: data }) => {
+    let data;
+    if (sessionStorage.getItem('roomDetail')) {
+      let string = sessionStorage.getItem('roomDetail') || '';
+      data = JSON.parse(string);
+    }
+    getToken(`${name} _unAuthorized (Accepted By: ${data?.acceptedBy})`, roomName).then(async ({ token: data }) => {
       await videoConnect(data);
       process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && chatConnect(data);
       setRoomUserId(0);
@@ -176,9 +203,48 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
       </Grid>
     );
   }
-
+  const handleCloseAgree = () => {
+    setOpen(false);
+    setCount([]);
+  };
+  const handleCloseDisagree = () => {
+    setOpen(false);
+    setCount([]);
+  };
+  const Transition = React.forwardRef(function Transition(
+    props: TransitionProps & {
+      children: React.ReactElement<any, any>;
+    },
+    ref: React.Ref<unknown>
+  ) {
+    return <Slide direction="up" ref={ref} {...props} />;
+  });
+  console.log(count, 'count');
   return (
     <>
+      {count.length ? (
+        <>
+          <Dialog
+            open={open}
+            TransitionComponent={Transition}
+            keepMounted
+            onClose={handleCloseDisagree}
+            aria-describedby="alert-dialog-slide-description"
+          >
+            {/* <DialogTitle>{'Someone want to join room'}</DialogTitle> */}
+            <DialogContent>
+              <DialogContentText id="alert-dialog-slide-description">
+                Your connection request was not accepted
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseAgree}>Ok</Button>
+            </DialogActions>
+          </Dialog>
+        </>
+      ) : (
+        <></>
+      )}
       {/* <AlertDialogSlide /> */}
       <Snackbar
         open={waitingError}

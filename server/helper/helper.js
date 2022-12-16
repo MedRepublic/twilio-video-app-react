@@ -24,7 +24,7 @@ function mustBeInArray(array, id) {
 
 function mustBeInArrayName(array, room) {
     return new Promise((resolve, reject) => {
-        const row = array.filter(r => r.room == room && r.inRoomAdded == false)
+        const row = array.filter(r => r.room == room && r.inRoomAdded == null)
         if (!row) {
             reject({
                 message: 'ID is not good',

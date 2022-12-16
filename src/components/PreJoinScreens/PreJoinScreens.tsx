@@ -39,7 +39,6 @@ export default function PreJoinScreens() {
 
   const [mediaError, setMediaError] = useState<Error>();
   const [snackError, snackSetError] = useState<Boolean>(false);
-
   useEffect(() => {
     if (token) {
       try {

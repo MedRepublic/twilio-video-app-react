@@ -75,24 +75,29 @@ export default function MainParticipant() {
       : null;
 
   const handleCloseAgree = () => {
-    acceptRequest(count[0]?.id, count[0]?.room, count[0]?.name).then(async ({ data }) => {
-      if (data) {
-        setOpen(false);
+    acceptRequest(count[0]?.id, count[0]?.room, count[0]?.name, true, localParticipant?.identity, '').then(
+      async ({ data }) => {
+        if (data) {
+          setOpen(false);
+        }
+        setProcess(process + 1);
       }
-      setProcess(process + 1);
-    });
+    );
     setOpen(false);
     setCount([]);
     setProcess(process + 1);
   };
   const handleCloseDisagree = () => {
-    rejectRequest(count[0]?.id).then(async ({ data }) => {
-      console.log(data);
-      if (data) {
-        setOpen(false);
+    rejectRequest(count[0]?.id, count[0]?.room, count[0]?.name, false, '', localParticipant?.identity).then(
+      async ({ data }) => {
+        console.log(data);
+        if (data) {
+          console.log(room, 'room reject');
+          setOpen(false);
+        }
+        setProcess(process + 1);
       }
-      setProcess(process + 1);
-    });
+    );
     setOpen(false);
     setCount([]);
     setProcess(process + 1);
