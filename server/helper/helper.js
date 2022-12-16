@@ -24,7 +24,7 @@ function mustBeInArray(array, id) {
 
 function mustBeInArrayName(array, room) {
     return new Promise((resolve, reject) => {
-        const row = array.filter(r => r.room == room && r.inRoomAdded == false)
+        const row = array.filter(r => r.room == room && r.inRoomAdded == null)
         if (!row) {
             reject({
                 message: 'ID is not good',
@@ -40,7 +40,7 @@ function mustBeInArrayRoomAndName(array, room, name) {
         const row = array.find(r => r.room == room && r.name == name)
         if (!row) {
             reject({
-                message: 'ID is not good',
+                message: 'Room is not found',
                 status: 404
             })
         }
@@ -78,8 +78,6 @@ async function writeJSONFile(filename, content) {
         })
         resolve()
     })
-    // console.log(fs.existsSync(filename))
-
 }
 export default {
     getNewId,

@@ -39,12 +39,11 @@ function getRoomByRoomAndName(roomName, userName) {
     })
 }
 function insertRoom(newRoom) {
-    // console.log(newRoom)
     return new Promise((resolve, reject) => {
         helper.roomNameAndUserName(rooms, newRoom.room, newRoom.name)
             .then(room => {
                 if (room.data) {
-                    resolve(room.data)
+                    resolve(updateRoom(room.data.id, newRoom))
                 } else {
                     const id = { id: helper.getNewId(rooms) }
                     const date = {

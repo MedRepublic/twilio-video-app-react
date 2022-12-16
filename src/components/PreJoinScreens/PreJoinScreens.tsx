@@ -32,7 +32,6 @@ export default function PreJoinScreens() {
   const { getAudioAndVideoTracks } = useVideoContext();
   const { URLRoomName } = useParams<{ URLRoomName?: string }>();
   const { token } = useParams<{ token?: string }>();
-  // const { userName } = useParams<{ userName?: string }>();
   const [step, setStep] = useState(Steps.roomNameStep);
 
   const [name, setName] = useState<string>(user?.displayName || '');
@@ -40,34 +39,28 @@ export default function PreJoinScreens() {
 
   const [mediaError, setMediaError] = useState<Error>();
   const [snackError, snackSetError] = useState<Boolean>(false);
-  // const Secret = 'Hello';
   useEffect(() => {
     if (token) {
       try {
-        // let decoded: any = jwt.verify(token, Secret);
-        // let code = parseJwt(token);
-        // console.log(code);
         let decoded: any = jwt_decode(token);
-        console.log(decoded);
         if (decoded) {
-          console.log('here');
-          if (decoded.room) {
-            setRoomName(decoded?.room);
+          sessionStorage.setItem('urlLoginType', 'tokenUser');
+          if (decoded?.grants && decoded?.grants?.video && decoded?.grants?.video?.room) {
+            setRoomName(decoded?.grants?.video?.room);
           }
-          if (decoded?.name) {
-            setName(decoded?.name);
+          if (decoded?.grants && decoded?.grants?.identity) {
+            setName(decoded?.grants?.identity);
             setStep(Steps.deviceSelectionStep);
           }
         }
       } catch (error) {
         console.error(error);
       }
+    } else {
+      sessionStorage.setItem('urlLoginType', 'guestUser');
     }
     if (URLRoomName) {
       setRoomName(URLRoomName);
-      // if (user?.displayName) {
-      //   setStep(Steps.deviceSelectionStep);
-      // }
     }
     if (user?.displayName && roomName) {
       setName(user?.displayName);

@@ -93,7 +93,6 @@ export function GalleryView() {
   const galleryViewLayoutParticipantCount =
     currentPage === 1 ? paginatedParticipants.length : maxGalleryViewParticipants;
   const { participantVideoWidth, containerRef } = useGalleryViewLayout(galleryViewLayoutParticipantCount);
-  // console.log(room);
   const participantWidth = `${participantVideoWidth}px`;
   const participantHeight = `${Math.floor(participantVideoWidth * GALLERY_VIEW_ASPECT_RATIO)}px`;
 

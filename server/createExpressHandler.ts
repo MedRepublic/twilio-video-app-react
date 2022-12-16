@@ -38,16 +38,7 @@ export function createExpressHandler(serverlessFunction: ServerlessFunction) {
 }
 
 export async function twilioNotification(serverlessFunction: ServerlessFunction) {
-  // console.log("test")
   try {
-    // await twilioClient.notify.v1.services('IS370b45527f4b4cbb8ea1608d2cd4de62')
-    //   .bindings
-    //   .create({
-    //      identity: 'identity',
-    //      bindingType: 'apn',
-    //      address: 'address'
-    //    })
-    //   .then(binding => console.log(binding.sid));
      await twilioClient.notify.v1.services('IS370b45527f4b4cbb8ea1608d2cd4de62')
       .notifications
       .create({body: 'Hello Bob', identity: ['identity']})
