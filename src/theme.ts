@@ -44,7 +44,7 @@ export default createTheme({
       root: {
         borderRadius: '4px',
         textTransform: 'none',
-        color: '#2E5BFF',
+        color: 'black',
         fontSize: '1.2rem',
         transition: defaultTheme.transitions.create(['background-color', 'box-shadow', 'border', 'color'], {
           duration: defaultTheme.transitions.duration.short,

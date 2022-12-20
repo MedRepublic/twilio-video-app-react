@@ -142,17 +142,17 @@ export default function MainParticipantInfo({ participant, children }: MainParti
   return (
     <div
       data-cy-main-participant
-      data-cy-participant={participant.identity}
+      data-cy-participant={participant.identity.split(' ')[0]}
       className={clsx(classes.container, {
         [classes.fullWidth]: !isRemoteParticipantScreenSharing,
       })}
     >
       <div className={classes.infoContainer}>
         <div style={{ display: 'flex' }}>
-          <div className={classes.identity}>
+          <div className={classes.identity.split(' ')[0]}>
             <AudioLevelIndicator audioTrack={audioTrack} />
             <Typography variant="body1" color="inherit">
-              {participant.identity}
+              {participant.identity.split(' ')[0]}
               {isLocal && ' (You)'}
               {screenSharePublication && ' - Screen'}
             </Typography>

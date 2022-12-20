@@ -46,6 +46,8 @@ const useStyles = makeStyles((theme: Theme) => ({
       width: '100%',
       '& button': {
         margin: '0.5em 0',
+        height: '40',
+        width: '35',
       },
     },
   },
@@ -59,6 +61,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   mobileButton: {
     padding: '0.8em 0',
     margin: 0,
+    height: 40,
+    width: 40,
   },
 }));
 
@@ -249,14 +253,14 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
       <Snackbar
         open={waitingError}
         headline="Wait..."
-        message="Waiting for organizer to connect you"
+        message="We have notified the Doctor you are here"
         variant="error"
         handleClose={() => setWaitingError(!waitingError)}
       />
       <Snackbar
         open={callStartedError}
         headline="Wait..."
-        message="This call hasn’t started yet, please wait..."
+        message="This call hasn’t started yet..."
         variant="error"
         handleClose={() => {
           setCallStartedError(!callStartedError);
@@ -264,7 +268,7 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
         }}
       />
       <Typography variant="h5" className={classes.gutterBottom}>
-        Join {roomName}
+        <b>Dr. {roomName.split('_')[0]}</b> Telehealth Call
       </Typography>
 
       <Grid container justifyContent="center">
@@ -304,6 +308,16 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
             </div>
           </Grid>
         </Grid>
+      </Grid>
+      <Grid container justifyContent="center">
+        <div className={classes.joinButtons}>
+          <Button variant="outlined" color="primary" onClick={() => setStep(Steps.roomNameStep)}>
+            Cancel
+          </Button>
+          <Button variant="contained" color="primary" data-cy-join-now onClick={handleJoin} disabled={disableButtons}>
+            Join Now
+          </Button>
+        </div>
       </Grid>
     </>
   );

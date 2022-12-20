@@ -102,6 +102,22 @@ export interface StateContextType {
       }
     ];
   }>;
+  deleteRequest(
+    id: number
+  ): Promise<{
+    room_type: RoomType;
+    token: string;
+    data: [
+      {
+        createdAt: Date;
+        id: number;
+        inRoomAdded: boolean;
+        roomName: string;
+        updatedAt: Date;
+        userName: string;
+      }
+    ];
+  }>;
   getTokenEncode(token: string): Promise<{ name: string; room_type: RoomType; token: string }>;
   user?: User | null | { displayName: undefined; photoURL: undefined; passcode?: string };
   signIn?(passcode?: string): Promise<void>;
@@ -317,6 +333,28 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
           })
           .catch(err => setError(err));
       },
+
+      deleteRequest: async id => {
+        const endpoint = process.env.REACT_APP_TOKEN_ENDPOINT || '/room/deleteRequest/' + id;
+        return fetch(endpoint, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          // body: JSON.stringify({ room: roomName, name, inRoomAdded: false, rejectedBy, acceptedBy: null }),
+          method: 'DELETE',
+        })
+          .then(async res => {
+            const jsonResponse = await res.json();
+
+            // if (!res.ok) {
+            //   const roomError = new Error(jsonResponse.error?.message || 'Your connection request was rejected');
+            //   roomError.code = jsonResponse.code;
+            //   return Promise.reject(roomError);
+            // }
+            return jsonResponse;
+          })
+          .catch(err => setError(err));
+      },
     };
   }
 
@@ -451,6 +489,21 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
       });
   };
 
+  const deleteRequest: StateContextType['deleteRequest'] = id => {
+    setIsFetchingRoomUndefined(true);
+    return contextValue
+      .deleteRequest(id)
+      .then(res => {
+        setIsFetchingCreateRoom(false);
+        return res;
+      })
+      .catch(err => {
+        setError(err);
+        setIsFetchingCreateRoom(false);
+        return Promise.reject(err);
+      });
+  };
+
   return (
     <StateContext.Provider
       value={{
@@ -463,6 +516,7 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
         getRoomUndefined,
         acceptRequest,
         rejectRequest,
+        deleteRequest,
       }}
     >
       {props.children}
