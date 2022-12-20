@@ -9,10 +9,10 @@ import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     button: {
-      background: theme.brand,
+      background: 'red',
       color: 'white',
       '&:hover': {
-        background: '#2E5BFF',
+        background: 'red',
       },
     },
   })
@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function EndCallButton(props: { className?: string }) {
   const classes = useStyles();
   const { room } = useVideoContext();
-  const { createRoom, userRoomDetial, rejectRequest, isFetchingCreateRoom } = useAppState();
+  const { createRoom, userRoomDetial, deleteRequest, isFetchingCreateRoom } = useAppState();
   console.log(room, 25);
   let roomUser = true;
   if (sessionStorage.getItem('urlLoginType') == 'guestUser') {
@@ -51,7 +51,7 @@ export default function EndCallButton(props: { className?: string }) {
       data = JSON.parse(string);
     }
     if (data) {
-      return await rejectRequest(data.id, data.room, data.name, false, '', '')
+      return await deleteRequest(data.id)
         .then(data => {
           room!.disconnect();
           return;

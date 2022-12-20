@@ -116,12 +116,11 @@ export default function MainParticipant() {
             onClose={handleCloseDisagree}
             aria-describedby="alert-dialog-slide-description"
           >
-            <DialogTitle>{'Someone want to join room'}</DialogTitle>
-            <DialogContent>
-              <DialogContentText id="alert-dialog-slide-description">
-                <b>{count[0].name}</b> has request to join this call
-              </DialogContentText>
-            </DialogContent>
+            <DialogTitle>
+              {' '}
+              <b>{count[0].name}</b> has request to join this call
+            </DialogTitle>
+
             <DialogActions>
               <Button onClick={handleCloseDisagree}>Reject</Button>
               <Button onClick={handleCloseAgree}>Accept</Button>

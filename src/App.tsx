@@ -4,6 +4,7 @@ import { styled, Theme } from '@material-ui/core/styles';
 import MenuBar from './components/MenuBar/MenuBar';
 import MobileTopMenuBar from './components/MobileTopMenuBar/MobileTopMenuBar';
 import PreJoinScreens from './components/PreJoinScreens/PreJoinScreens';
+import Footer from './components/Footer';
 import ReconnectingNotification from './components/ReconnectingNotification/ReconnectingNotification';
 import RecordingNotifications from './components/RecordingNotifications/RecordingNotifications';
 import Room from './components/Room/Room';
@@ -38,7 +39,10 @@ export default function App() {
   return (
     <Container style={{ height }}>
       {roomState === 'disconnected' ? (
-        <PreJoinScreens />
+        <>
+          <PreJoinScreens />
+          <Footer />
+        </>
       ) : (
         <Main>
           <ReconnectingNotification />

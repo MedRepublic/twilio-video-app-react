@@ -55,16 +55,14 @@ export default function RoomNameScreen({ name, roomName, setName, setRoomName, h
         Join a Room
       </Typography>
       <Typography variant="body1">
-        {hasUsername
-          ? "Enter the name of a room you'd like to join."
-          : "Enter your name and the name of a room you'd like to join"}
+        Welcome to the <b>Dr. {roomName.split('_')[0]} </b> Telehealth Call
       </Typography>
       <form onSubmit={handleSubmit}>
         <div className={classes.inputContainer}>
           {!hasUsername && (
             <div className={classes.textFieldContainer}>
               <InputLabel shrink htmlFor="input-user-name">
-                Your Name
+                Name
               </InputLabel>
               <TextField
                 id="input-user-name"
@@ -76,7 +74,7 @@ export default function RoomNameScreen({ name, roomName, setName, setRoomName, h
               />
             </div>
           )}
-          <div className={classes.textFieldContainer}>
+          {/* <div className={classes.textFieldContainer}>
             <InputLabel shrink htmlFor="input-room-name">
               Room Name
             </InputLabel>
@@ -89,7 +87,7 @@ export default function RoomNameScreen({ name, roomName, setName, setRoomName, h
               value={roomName}
               onChange={handleRoomNameChange}
             />
-          </div>
+          </div> */}
         </div>
         <Grid container justifyContent="flex-end">
           <Button

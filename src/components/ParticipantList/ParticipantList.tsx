@@ -66,6 +66,7 @@ export default function ParticipantList() {
             const isSelected = participant === selectedParticipant;
             const hideParticipant =
               participant === mainParticipant && participant !== screenShareParticipant && !isSelected;
+
             return (
               <Participant
                 key={participant.sid}

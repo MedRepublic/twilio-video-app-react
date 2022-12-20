@@ -194,7 +194,7 @@ export default function ParticipantInfo({
         [classes.galleryView]: isGalleryViewActive,
       })}
       onClick={onClick}
-      data-cy-participant={participant.identity}
+      data-cy-participant={participant.identity.split(' ')[0]}
     >
       <div className={classes.infoContainer}>
         <NetworkQualityLevel participant={participant} />
@@ -204,10 +204,10 @@ export default function ParticipantInfo({
               <ScreenShareIcon />
             </span>
           )}
-          <span className={classes.identity}>
+          <span className={classes.identity.split(' ')[0]}>
             <AudioLevelIndicator audioTrack={audioTrack} />
             <Typography variant="body1" className={classes.typography} component="span">
-              {participant.identity}
+              {participant.identity.split(' ')[0]}
               {isLocalParticipant && ' (You)'}
             </Typography>
           </span>

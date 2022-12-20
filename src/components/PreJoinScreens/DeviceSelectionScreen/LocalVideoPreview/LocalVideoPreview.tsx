@@ -74,10 +74,10 @@ export default function LocalVideoPreview({ identity }: { identity: string }) {
       </div>
 
       <div className={classes.identityContainer}>
-        <span className={classes.identity}>
+        <span className={classes.identity.split(' ')[0]}>
           <LocalAudioLevelIndicator />
           <Typography variant="body1" color="inherit" component="span">
-            {identity}
+            {identity.split(' ')[0]}
           </Typography>
         </span>
       </div>

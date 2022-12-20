@@ -17,9 +17,11 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     button: {
       '&[disabled]': {
-        color: '#bbb',
+        color: 'black',
         '& svg *': {
-          fill: '#bbb',
+          fill: 'black',
+          height: 40,
+          width: 40,
         },
       },
     },
