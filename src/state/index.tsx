@@ -28,6 +28,7 @@ export interface StateContextType {
       updatedAt: Date;
       userName: string;
     };
+    message: string;
   }>;
   userRoomDetial(
     id: number
