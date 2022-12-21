@@ -9,10 +9,10 @@ import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     button: {
-      background: 'red',
+      background: '#E22525',
       color: 'white',
       '&:hover': {
-        background: 'red',
+        background: '#E22525',
       },
     },
   })

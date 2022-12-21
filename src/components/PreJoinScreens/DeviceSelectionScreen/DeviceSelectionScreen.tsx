@@ -19,7 +19,7 @@ import { useAppState } from '../../../state';
 import useChatContext from '../../../hooks/useChatContext/useChatContext';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
 import Snackbar from '../../Snackbar/Snackbar';
-
+import SettingsIcon from '../../../icons/SettingsIcon';
 const useStyles = makeStyles((theme: Theme) => ({
   gutterBottom: {
     marginBottom: '1em',
@@ -275,6 +275,14 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
         <Grid item md={7} sm={12} xs={12}>
           <div className={classes.localPreviewContainer}>
             <LocalVideoPreview identity={name} />
+            <Button
+              // ref={anchorRef}
+              // onClick={() => setMenuOpen(true)}
+              startIcon={<SettingsIcon />}
+              // className={classes.settingsButton}
+            >
+              Settings
+            </Button>
           </div>
           <div className={classes.mobileButtonBar}>
             <Hidden mdUp>
