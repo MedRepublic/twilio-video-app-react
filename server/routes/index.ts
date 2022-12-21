@@ -214,7 +214,7 @@ router.post('/token', m.checkFieldsPost, async (req, res) => {
               
             })
             .catch((err: any) => {
-                res.status(500).json({ status: 500, data: null, message: err.message })
+                res.status(500).json({  status: 400, data: null, message:"This call hasn’t started yet, please wait..."})
             });
     } catch (error) {
         res.status(400).json({ status: 400, data: null, message: error })
