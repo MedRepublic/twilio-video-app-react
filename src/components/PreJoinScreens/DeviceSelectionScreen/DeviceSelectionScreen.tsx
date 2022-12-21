@@ -19,7 +19,7 @@ import { useAppState } from '../../../state';
 import useChatContext from '../../../hooks/useChatContext/useChatContext';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
 import Snackbar from '../../Snackbar/Snackbar';
-
+import SettingsIcon from '../../../icons/SettingsIcon';
 const useStyles = makeStyles((theme: Theme) => ({
   gutterBottom: {
     marginBottom: '1em',
@@ -89,7 +89,7 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
   const [waitingError, setWaitingError] = useState(false);
   const [callStartedError, setCallStartedError] = useState(false);
   // const
-  const { createRoom, userRoomDetial, rejectRequest, isFetchingCreateRoom } = useAppState();
+  const { createRoom, userRoomDetial, rejectRequest, isFetchingCreateRoom, deleteRequest } = useAppState();
   const [newProcess, setProcess] = useState(0);
   const { connect: chatConnect } = useChatContext();
   const { connect: videoConnect, isAcquiringLocalTracks, isConnecting } = useVideoContext();
@@ -97,7 +97,7 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
   const [roomUserId, setRoomUserId] = useState(0);
   const [inRoomAdded, setInRoomAdded] = useState(false);
   const [myProcess, setmyProcess] = useState(false);
-  const [error, setError] = useState<TwilioError | null>(null);
+  const [error, setError] = useState('');
   const [open, setOpen] = React.useState(false);
   const [count, setCount] = useState<any>([]);
 
@@ -145,7 +145,8 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
 
   const newCreateRoom = (name: any, roomName: any, inRoomAdded: any) => {
     createRoom(name, roomName, inRoomAdded)
-      .then(async ({ data }) => {
+      .then(async ({ data, message }) => {
+        console.log(message);
         if (data) {
           const id = String(data.id);
           localStorage.setItem('roomId', id);
@@ -155,6 +156,7 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
           setRoomUserId(data.id);
           setProcess(newProcess + 1);
         } else {
+          setError(message);
           setCallStartedError(true);
           setInRoomAdded(false);
           setRoomUserId(0);
@@ -209,12 +211,15 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
   }
   const handleCloseAgree = () => {
     setOpen(false);
-    setCount([]);
+    console.log(count[0]);
+    deleteRequest(count[0].id)
+      .then(data => {
+        setCount([]);
+      })
+      .catch(err => console.log(err));
+    console.log(count);
   };
-  const handleCloseDisagree = () => {
-    setOpen(false);
-    setCount([]);
-  };
+
   const Transition = React.forwardRef(function Transition(
     props: TransitionProps & {
       children: React.ReactElement<any, any>;
@@ -232,7 +237,7 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
             open={open}
             TransitionComponent={Transition}
             keepMounted
-            onClose={handleCloseDisagree}
+            onClose={handleCloseAgree}
             aria-describedby="alert-dialog-slide-description"
           >
             {/* <DialogTitle>{'Someone want to join room'}</DialogTitle> */}
@@ -260,7 +265,7 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
       <Snackbar
         open={callStartedError}
         headline="Wait..."
-        message="This call hasn’t started yet..."
+        message={error}
         variant="error"
         handleClose={() => {
           setCallStartedError(!callStartedError);
@@ -275,6 +280,14 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
         <Grid item md={7} sm={12} xs={12}>
           <div className={classes.localPreviewContainer}>
             <LocalVideoPreview identity={name} />
+            <Button
+              // ref={anchorRef}
+              // onClick={() => setMenuOpen(true)}
+              startIcon={<SettingsIcon />}
+              // className={classes.settingsButton}
+            >
+              Settings
+            </Button>
           </div>
           <div className={classes.mobileButtonBar}>
             <Hidden mdUp>

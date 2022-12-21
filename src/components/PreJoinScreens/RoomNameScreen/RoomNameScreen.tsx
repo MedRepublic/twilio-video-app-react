@@ -52,11 +52,9 @@ export default function RoomNameScreen({ name, roomName, setName, setRoomName, h
   return (
     <>
       <Typography variant="h5" className={classes.gutterBottom}>
-        Join a Room
-      </Typography>
-      <Typography variant="body1">
         Welcome to the <b>Dr. {roomName.split('_')[0]} </b> Telehealth Call
       </Typography>
+      <Typography variant="body1">Enter your name and we will let the doctor know you are here</Typography>
       <form onSubmit={handleSubmit}>
         <div className={classes.inputContainer}>
           {!hasUsername && (
