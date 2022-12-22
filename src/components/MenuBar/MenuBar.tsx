@@ -84,7 +84,8 @@ export default function MenuBar() {
           <Hidden smDown>
             <Grid style={{ flex: 1 }}>
               <Typography variant="body1">
-                {room!.name} | {participants.length + 1} participant{participants.length ? 's' : ''}
+                <b> Dr. {room!.name.split('_')[0]} </b> | {participants.length + 1} participant
+                {participants.length ? 's' : ''}
               </Typography>
             </Grid>
           </Hidden>

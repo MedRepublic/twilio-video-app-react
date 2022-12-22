@@ -192,29 +192,35 @@ router.post('/token', m.checkFieldsPost, async (req, res) => {
             .fetch()
             .then(async (rooms: any) => {
                 console.log(rooms, 'room');
-            //     client.video.v1.rooms('DailyStandup')
-            //    .participants('Alice')
-            //    .fetch()
-            //    .then((participant:any) => console.log(participant.sid));
-                client.video.v1.rooms(req.body.room).participants(req.body.name)
-                .fetch()
-                .then((participant: any) => {
-                    console.log('userrs', participant)
-                    res.status(400).json({ status: 400, data: null, message: "That name is in use, please enter a unique name" })
-                }).catch((err:any)=>{
-                    room.insertRoom(req.body)
-                    .then((room: { id: any; }) => res.status(200).json({
-                        status: 200,
-                        message: `The room #${room.id} has been created`,
-                        data: room
-                    })).catch((err: { message: any; }) => res.status(400).json({ status: 400, data: null, message:"This call hasn’t started yet, please wait..." }))
-    
-                })
+                console.log(req.body)
+                //     client.video.v1.rooms('DailyStandup')
+                //    .participants('Alice')
+                //    .fetch()
+                //    .then((participant:any) => console.log(participant.sid));
+                client.video.v1.rooms(req.body.room)
+                    .participants(req.body.name)
+                    .fetch()
+                    .then((participant: any) => {
+                        console.log('userrs', participant)
+                        res.status(400).json({ status: 400, data: null, message: "That name is in use, please enter a unique name" })
+                    }).catch((err: any) => {
+                        console.log(err)
+                        room.getRoomByRoomAndName(req.body.room, req.body.name).then(
+                            (data) => res.status(400).json({ status: 400, data: null, message: "That name is in use, please enter a unique name" })
+                        ).catch(err => {
+                            room.insertRoom(req.body)
+                                .then((room: { id: any; }) => res.status(200).json({
+                                    status: 200,
+                                    message: `The room #${room.id} has been created`,
+                                    data: room
+                                })).catch((err: { message: any; }) => res.status(400).json({ status: 400, data: null, message: "This call hasn’t started yet, please wait..." }))
+                        })
+                    })
 
-              
+
             })
             .catch((err: any) => {
-                res.status(500).json({  status: 400, data: null, message:"This call hasn’t started yet, please wait..."})
+                res.status(500).json({ status: 400, data: null, message: "This call hasn’t started yet, please wait..." })
             });
     } catch (error) {
         res.status(400).json({ status: 400, data: null, message: error })
