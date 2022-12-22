@@ -33,3 +33,6 @@ junit.xml
 serviceAccountKey.json
 
 public/virtualbackground/
+
+
+server/data
