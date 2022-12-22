@@ -35,4 +35,5 @@ serviceAccountKey.json
 public/virtualbackground/
 
 
-server/data
+/server/data/*
+server/data/*
