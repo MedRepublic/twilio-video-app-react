@@ -1,11 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { TwilioError } from 'twilio-video';
+import React, { useEffect, useState } from 'react';
 import { makeStyles, Typography, Grid, Button, Theme, Hidden } from '@material-ui/core';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
 import { TransitionProps } from '@mui/material/transitions';
 import Slide from '@mui/material/Slide';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -19,7 +17,6 @@ import { useAppState } from '../../../state';
 import useChatContext from '../../../hooks/useChatContext/useChatContext';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
 import Snackbar from '../../Snackbar/Snackbar';
-import SettingsIcon from '../../../icons/SettingsIcon';
 const useStyles = makeStyles((theme: Theme) => ({
   gutterBottom: {
     marginBottom: '1em',
@@ -64,6 +61,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: 40,
     width: 40,
   },
+  settingsButton: {
+    margin: '1.8em 0 0',
+  },
 }));
 
 interface DeviceSelectionScreenProps {
@@ -73,12 +73,6 @@ interface DeviceSelectionScreenProps {
   snackSetError: (snackError: boolean) => void;
   setStep: (step: Steps) => void;
 }
-type CreateUserResponse = {
-  name: string;
-  job: string;
-  id: string;
-  createdAt: string;
-};
 
 export default function DeviceSelectionScreen({ name, roomName, setStep }: DeviceSelectionScreenProps) {
   const classes = useStyles();
@@ -89,7 +83,7 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
   const [waitingError, setWaitingError] = useState(false);
   const [callStartedError, setCallStartedError] = useState(false);
   // const
-  const { createRoom, userRoomDetial, rejectRequest, isFetchingCreateRoom, deleteRequest } = useAppState();
+  const { createRoom, userRoomDetial, isFetchingCreateRoom, deleteRequest } = useAppState();
   const [newProcess, setProcess] = useState(0);
   const { connect: chatConnect } = useChatContext();
   const { connect: videoConnect, isAcquiringLocalTracks, isConnecting } = useVideoContext();
@@ -100,7 +94,6 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
   const [error, setError] = useState('');
   const [open, setOpen] = React.useState(false);
   const [count, setCount] = useState<any>([]);
-
   const handleJoin = async () => {
     setProcess(0);
     setmyProcess(true);
@@ -143,8 +136,8 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
     }
   };
 
-  const newCreateRoom = (name: any, roomName: any, inRoomAdded: any) => {
-    createRoom(name, roomName, inRoomAdded)
+  const newCreateRoom = (userName: any, userRoomName: any, inUserRoomAdded: any) => {
+    createRoom(userName, userRoomName, inUserRoomAdded)
       .then(async ({ data, message }) => {
         console.log(message);
         if (data) {
@@ -280,14 +273,7 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
         <Grid item md={7} sm={12} xs={12}>
           <div className={classes.localPreviewContainer}>
             <LocalVideoPreview identity={name} />
-            <Button
-              // ref={anchorRef}
-              // onClick={() => setMenuOpen(true)}
-              startIcon={<SettingsIcon />}
-              // className={classes.settingsButton}
-            >
-              Settings
-            </Button>
+            <SettingsMenu mobileButtonClass={classes.mobileButton} />
           </div>
           <div className={classes.mobileButtonBar}>
             <Hidden mdUp>
