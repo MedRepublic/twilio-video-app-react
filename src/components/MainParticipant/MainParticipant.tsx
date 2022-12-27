@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
+// import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
@@ -27,13 +27,6 @@ export default function MainParticipant() {
   useEffect(() => {
     const loginType = sessionStorage.getItem('urlLoginType');
     setTimeout(() => {
-      console.log(
-        !open && room?.name && !count.length && loginType == 'tokenUser',
-        open,
-        room?.name,
-        count.length,
-        loginType
-      );
       if (!open && room?.name && !count.length && loginType == 'tokenUser') {
         roomUndefined(room?.name);
       } else {
@@ -43,7 +36,6 @@ export default function MainParticipant() {
   }, [process]);
   const roomUndefined = async (roomName: any) => {
     await getRoomUndefined(roomName, localParticipant?.identity).then(async ({ data }) => {
-      console.log(data.length, count.length, open, data.length && open === false);
       if (data.length && open === false) {
         if (!count) {
           setProcess(process + 1);
@@ -90,9 +82,7 @@ export default function MainParticipant() {
   const handleCloseDisagree = () => {
     rejectRequest(count[0]?.id, count[0]?.room, count[0]?.name, false, '', localParticipant?.identity).then(
       async ({ data }) => {
-        console.log(data);
         if (data) {
-          console.log(room, 'room reject');
           setOpen(false);
         }
         setProcess(process + 1);

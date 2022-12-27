@@ -139,7 +139,6 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
   const newCreateRoom = (userName: any, userRoomName: any, inUserRoomAdded: any) => {
     createRoom(userName, userRoomName, inUserRoomAdded)
       .then(async ({ data, message }) => {
-        console.log(message);
         if (data) {
           const id = String(data.id);
           localStorage.setItem('roomId', id);
@@ -164,8 +163,6 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
     } else if (callStartedError && myProcess) {
       newCreateRoom(name, roomName, inRoomAdded);
     }
-
-    console.log(newProcess, roomUserId, callStartedError, myProcess);
   }, [newProcess]);
   useEffect(() => {
     if (inRoomAdded) {
@@ -204,13 +201,11 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
   }
   const handleCloseAgree = () => {
     setOpen(false);
-    console.log(count[0]);
     deleteRequest(count[0].id)
       .then(data => {
         setCount([]);
       })
       .catch(err => console.log(err));
-    console.log(count);
   };
 
   const Transition = React.forwardRef(function Transition(
@@ -221,7 +216,6 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
   ) {
     return <Slide direction="up" ref={ref} {...props} />;
   });
-  console.log(count, 'count');
   return (
     <>
       {count.length ? (

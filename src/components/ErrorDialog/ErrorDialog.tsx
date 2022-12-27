@@ -15,7 +15,6 @@ interface ErrorDialogProps {
 
 function ErrorDialog({ dismissError, error }: PropsWithChildren<ErrorDialogProps>) {
   const { message, code } = error || {};
-  console.log(message, code);
   const enhancedMessage = enhanceMessage(message, code);
 
   return (

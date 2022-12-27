@@ -21,11 +21,9 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function EndCallButton(props: { className?: string }) {
   const classes = useStyles();
   const { room } = useVideoContext();
-  const { createRoom, userRoomDetial, deleteRequest, isFetchingCreateRoom } = useAppState();
-  console.log(room, 25);
+  const { deleteRequest } = useAppState();
   let roomUser = true;
   if (sessionStorage.getItem('urlLoginType') == 'guestUser') {
-    console.log(room?.participants, 'room?.participants');
     if (room?.participants) {
       room?.participants.forEach((value, key) => {
         if (!value.identity.includes('_unAuthorized')) {
@@ -37,13 +35,15 @@ export default function EndCallButton(props: { className?: string }) {
   } else {
     roomUser = false;
   }
-  console.log(roomUser, 'roomuser');
+
   useEffect(() => {
     if (roomUser) {
       endCall();
     }
   }, [roomUser]);
-
+  window.addEventListener('beforeunload', ev => {
+    endCall();
+  });
   const endCall = async () => {
     let data;
     if (sessionStorage.getItem('roomDetail')) {

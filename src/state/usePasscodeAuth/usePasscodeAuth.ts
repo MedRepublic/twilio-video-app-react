@@ -90,21 +90,18 @@ export default function usePasscodeAuth() {
     },
     [user]
   );
-  const getTokenEncode = useCallback(
-    (token: string) => {
-      return fetchTokenEncode(token)
-        .then(async res => {
-          if (res.ok) {
-            return res;
-          }
-          const json = await res.json();
-          const errorMessage = getErrorMessage(json.error?.message || res.statusText);
-          throw Error(errorMessage);
-        })
-        .then(res => res.json());
-    },
-    [user]
-  );
+  const getTokenEncode = useCallback((token: string) => {
+    return fetchTokenEncode(token)
+      .then(async res => {
+        if (res.ok) {
+          return res;
+        }
+        const json = await res.json();
+        const errorMessage = getErrorMessage(json.error?.message || res.statusText);
+        throw Error(errorMessage);
+      })
+      .then(res => res.json());
+  }, []);
   const updateRecordingRules = useCallback(
     async (room_sid, rules) => {
       return fetch('/recordingrules', {

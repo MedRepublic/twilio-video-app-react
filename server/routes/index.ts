@@ -191,20 +191,12 @@ router.post('/token', m.checkFieldsPost, async (req, res) => {
         client.video.v1.rooms(req.body.room)
             .fetch()
             .then(async (rooms: any) => {
-                console.log(rooms, 'room');
-                console.log(req.body)
-                //     client.video.v1.rooms('DailyStandup')
-                //    .participants('Alice')
-                //    .fetch()
-                //    .then((participant:any) => console.log(participant.sid));
                 client.video.v1.rooms(req.body.room)
                     .participants(req.body.name)
                     .fetch()
                     .then((participant: any) => {
-                        console.log('userrs', participant)
                         res.status(400).json({ status: 400, data: null, message: "That name is in use, please enter a unique name" })
                     }).catch((err: any) => {
-                        console.log(err)
                         room.getRoomByRoomAndName(req.body.room, req.body.name).then(
                             (data) => res.status(400).json({ status: 400, data: null, message: "That name is in use, please enter a unique name" })
                         ).catch(err => {
