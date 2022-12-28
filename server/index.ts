@@ -6,6 +6,8 @@ import path from 'path';
 import cors from 'cors';
 import morgan from 'morgan';
 import { ServerlessFunction } from './types';
+import room from "./models/room.model";
+
 const PORT = process.env.PORT ?? 8081;
 
 const app = express();
@@ -52,6 +54,28 @@ app.get('*', (_, res) => {
   res.set('Cache-Control', 'no-cache');
   res.sendFile(path.join(__dirname, '../build/index.html'), { etag: false, lastModified: false });
 });
+
+
+async function checkExpiration (){ 
+  //check if past expiration date
+  room.getRooms().then(data=>{
+    for(let dataRoom of data){
+      if(dataRoom.updatedAt < new Date() && dataRoom.inRoomAdded == null){
+        room.deleteRoom(data.id).then(deleteRoom =>{
+          console.log(deleteRoom)
+        })
+      }
+    }
+  })
+  
+}
+
+function myFunction() {
+  var myinterval = 10*1000; // 10 Sec interval
+  setInterval(function(){ checkExpiration(); }, myinterval );
+}
+
+myFunction();
 
 app.listen(PORT, async() =>{ 
   // await connection.sync({alter:true});

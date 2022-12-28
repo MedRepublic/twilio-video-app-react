@@ -1,1 +1,10 @@
-[]
+[
+    {
+        "id": 1,
+        "createdAt": "Wed Dec 28 2022 15:27:26 GMT+0530 (India Standard Time)",
+        "updatedAt": "Wed Dec 28 2022 15:28:28 GMT+0530 (India Standard Time)",
+        "name": "test",
+        "room": "test_12345",
+        "inRoomAdded": null
+    }
+]
