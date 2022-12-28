@@ -8,7 +8,7 @@ import morgan from 'morgan';
 import { ServerlessFunction } from './types';
 import room from "./models/room.model";
 
-const PORT = process.env.PORT ?? 3000;
+const PORT = process.env.PORT ?? 8081;
 
 const app = express();
 app.use(cors());
@@ -60,7 +60,10 @@ async function checkExpiration (){
   //check if past expiration date
   room.getRooms().then(data=>{
     for(let dataRoom of data){
-      if(dataRoom.updatedAt < new Date() && dataRoom.inRoomAdded == null){
+      let date = new Date(dataRoom.updatedAt)
+      let newDate =  date.setHours(date.getHours() + 1);
+      console.log(new Date(newDate) < new Date(), dataRoom.updatedAt,newDate, new Date(newDate), new Date(dataRoom.updatedAt), new Date())
+      if(new Date(newDate) < new Date() && dataRoom.inRoomAdded == null){
         room.deleteRoom(data.id).then(deleteRoom =>{
           console.log(deleteRoom)
         })
