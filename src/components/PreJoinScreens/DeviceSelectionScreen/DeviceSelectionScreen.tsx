@@ -136,10 +136,12 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
     }
   };
 
-  const newCreateRoom = (userName: any, userRoomName: any, inUserRoomAdded: any) => {
+  const newCreateRoom = (userName: string, userRoomName: string, inUserRoomAdded: any) => {
+    console.log(userName, userRoomName, inUserRoomAdded);
     createRoom(userName, userRoomName, inUserRoomAdded)
-      .then(async ({ data, message }) => {
-        if (data) {
+      .then(async ({ status, data, message }) => {
+        console.log(status, data, message);
+        if (status == 200) {
           const id = String(data.id);
           localStorage.setItem('roomId', id);
 
@@ -151,10 +153,20 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
           setError(message);
           setCallStartedError(true);
           setInRoomAdded(false);
-          setRoomUserId(0);
+          if (data.id) {
+            const id = String(data.id);
+            localStorage.setItem('roomId', id);
+            setRoomUserId(data.id);
+            setProcess(newProcess + 1);
+          } else {
+            setRoomUserId(0);
+          }
         }
       })
-      .catch(err => setRoomUserId(0));
+      .catch(err => {
+        console.log(err);
+        setRoomUserId(0);
+      });
   };
 
   useEffect(() => {

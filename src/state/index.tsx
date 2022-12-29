@@ -29,6 +29,7 @@ export interface StateContextType {
       userName: string;
     };
     message: string;
+    status: number;
   }>;
   userRoomDetial(
     id: number

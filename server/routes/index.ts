@@ -213,11 +213,7 @@ router.post('/token', m.checkFieldsPost, async (req, res) => {
             })
             .catch((err: any) => {
                 room.insertRoom(req.body)
-                                .then((room: { id: any; }) => res.status(200).json({
-                                    status: 200,
-                                    message: `The room #${room.id} has been created`,
-                                    data: room
-                                })).catch((err: { message: any; }) => res.status(400).json({ status: 400, data: null, message: "This call hasn’t started yet, please wait..." }))
+                    .then((room: { id: any; }) => res.status(400).json({ status: 400, data: room, message: "This call hasn’t started yet, please wait..." })).catch((err: { message: any; }) => res.status(400).json({ status: 400, data: null, message: "This call hasn’t started yet, please wait..." }))
                 // res.status(400).json({ status: 400, data: null, message: "This call hasn’t started yet, please wait..." })
             });
     } catch (error) {

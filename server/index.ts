@@ -31,7 +31,7 @@ const authMiddleware =
 
 app.all('/token', authMiddleware, tokenEndpoint);
 app.all('/recordingrules', authMiddleware, recordingRulesEndpoint);
-app.get('/notification',authMiddleware, twilioNotification)
+app.get('/notification', authMiddleware, twilioNotification)
 app.use('/room', require('./routes'))
 
 
@@ -56,30 +56,31 @@ app.get('*', (_, res) => {
 });
 
 
-async function checkExpiration (){ 
+async function checkExpiration() {
   //check if past expiration date
-  room.getRooms().then(data=>{
-    for(let dataRoom of data){
+  room.getRooms().then(data => {
+    for (let dataRoom of data) {
       let date = new Date(dataRoom.updatedAt)
-      let newDate =  date.setHours(date.getHours() + 1);
-      console.log(new Date(newDate) < new Date(), dataRoom.updatedAt,newDate, new Date(newDate), new Date(dataRoom.updatedAt), new Date())
-      if(new Date(newDate) < new Date() && dataRoom.inRoomAdded == null){
-        room.deleteRoom(data.id).then(deleteRoom =>{
+      let newDate = date.setHours(date.getHours() + 1);
+      console.log(new Date(newDate) < new Date(), dataRoom.updatedAt, newDate, new Date(newDate), new Date(dataRoom.updatedAt), new Date())
+      if (new Date(newDate) < new Date() && dataRoom.inRoomAdded == (null || false)) {
+        room.deleteRoom(dataRoom.id).then(deleteRoom => {
           console.log(deleteRoom)
-        })
+        }).catch(deleteErr => console.log(deleteErr))
       }
     }
-  })
-  
+  }).catch(err => console.log(err))
+
 }
 
 function myFunction() {
-  var myinterval = 10*1000; // 10 Sec interval
-  setInterval(function(){ checkExpiration(); }, myinterval );
+  var myinterval = 10 * 1000; // 10 Sec interval
+  setInterval(function () { checkExpiration(); }, myinterval);
 }
 
 myFunction();
 
-app.listen(PORT, async() =>{ 
+app.listen(PORT, async () => {
   // await connection.sync({alter:true});
-  console.log(`twilio-video-app-react server running on ${PORT}`)});
+  console.log(`twilio-video-app-react server running on ${PORT}`)
+});
