@@ -63,7 +63,7 @@ async function checkExpiration() {
       let date = new Date(dataRoom.updatedAt)
       let newDate = date.setHours(date.getHours() + 1);
       console.log(new Date(newDate) < new Date(), dataRoom.updatedAt, newDate, new Date(newDate), new Date(dataRoom.updatedAt), new Date())
-      if (new Date(newDate) < new Date() && dataRoom.inRoomAdded == (null || false)) {
+      if (new Date(newDate) < new Date() && dataRoom.inRoomAdded == null) {
         room.deleteRoom(dataRoom.id).then(deleteRoom => {
           console.log(deleteRoom)
         }).catch(deleteErr => console.log(deleteErr))
