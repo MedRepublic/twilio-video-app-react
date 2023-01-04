@@ -108,7 +108,7 @@ export default function MainParticipant() {
           >
             <DialogTitle>
               {' '}
-              <b>{count[0].name}</b> has request to join this call
+              <b>{count[0].name}</b> has requested to join this call
             </DialogTitle>
 
             <DialogActions>
