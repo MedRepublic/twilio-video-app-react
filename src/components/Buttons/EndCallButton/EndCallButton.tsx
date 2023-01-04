@@ -53,6 +53,7 @@ export default function EndCallButton(props: { className?: string }) {
     if (data) {
       return await deleteRequest(data.id)
         .then(data => {
+          localStorage.removeItem('roomId');
           room!.disconnect();
           return;
         })

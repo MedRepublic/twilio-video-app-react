@@ -278,8 +278,9 @@ router.delete('/deleteRequest/:id', m.mustBeInteger, async (req, res) => {
         .catch((err: { status: number; message: any; }) => {
             if (err.status) {
                 res.status(err.status).json({ status: err.status, data: null, message: err.message })
+            }else{
+                res.status(500).json({ status: 500, data: null, message: err.message })
             }
-            res.status(500).json({ status: 500, data: null, message: err.message })
         })
 })
 

@@ -41,6 +41,7 @@ export default function App() {
     if (data) {
       return await deleteRequest(data)
         .then(data => {
+          localStorage.removeItem('roomId');
           // room!.disconnect();
           return;
         })
