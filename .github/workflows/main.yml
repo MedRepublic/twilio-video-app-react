@@ -25,7 +25,17 @@ jobs:
       # Runs a single command using the runners shell
       - name: Install dependencies for the twilio function
         run: npm ci
+      # added by JFL
       - run: npm run build
+      - name: rsync deployments
+        uses: burnett01/rsync-deployments@5.1
+        with:
+          switches: -avzr --delete
+          path: ./*
+          remote_path: /opt/bitnami/twilio-video-app-react/
+          remote_host: ec2-50-18-145-191.us-west-1.compute.amazonaws.com
+          remote_user: bitnami
+          remote_key: "${{ secrets.SSH_PRIVATE_KEY }}"
       # - name: Install twilio cli and run deploy command
        # env:
          # TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
