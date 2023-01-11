@@ -26,7 +26,7 @@ jobs:
       - name: Install dependencies for the twilio function
         run: npm ci
       # added by JFL
-      - run: npm run build
+      - run: CI=false npm run build
       - name: rsync deployments
         uses: burnett01/rsync-deployments@5.1
         with:
