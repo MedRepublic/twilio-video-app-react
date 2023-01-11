@@ -32,9 +32,9 @@ jobs:
         with:
           switches: -avzr --delete
           path: ./*
-          remote_path: /opt/bitnami/twilio-video-app-react/
+          remote_path: /var/www/twilio-video-app-react/
           remote_host: ec2-50-18-145-191.us-west-1.compute.amazonaws.com
-          remote_user: bitnami
+          remote_user: ubuntu
           remote_key: "${{ secrets.SSH_PRIVATE_KEY }}"
       # - name: Install twilio cli and run deploy command
        # env:
