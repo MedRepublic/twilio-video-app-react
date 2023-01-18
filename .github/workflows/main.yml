@@ -34,14 +34,14 @@ jobs:
          echo TWILIO_API_KEY_SECRET=${{ secrets.TWILIO_API_KEY_SECRET }} >> .env
          echo TWILIO_AUTH_TOKEN=${{ secrets.TWILIO_AUTH_TOKEN }} >> .env
          echo REACT_APP_DISABLE_TWILIO_CONVERSATIONS=true >> .env
-      - name: set envs
+      - name: build module 
+        run: CI=false npm run build
         env:
          TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
          TWILIO_API_KEY_SID: ${{ secrets.TWILIO_API_KEY_SID }}
          TWILIO_API_KEY_SECRET: ${{ secrets.TWILIO_API_KEY_SECRET }}
          TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
          REACT_APP_DISABLE_TWILIO_CONVERSATIONS: true
-      - run: CI=false npm run build
       - name: rsync deployments
         uses: burnett01/rsync-deployments@5.1
         with:
