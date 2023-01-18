@@ -27,7 +27,7 @@ jobs:
         run: npm ci
       # added by JFL
       - name: create env file
-      - run: |
+        run: |
         touch .env
         echo TWILIO_ACCOUNT_SID=${{ secrets.TWILIO_ACCOUNT_SID }} >> .env
         echo TWILIO_API_KEY_SID=${{ secrets.TWILIO_API_KEY_SID }} >> .env
