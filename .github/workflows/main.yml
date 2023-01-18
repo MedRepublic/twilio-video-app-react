@@ -28,12 +28,12 @@ jobs:
       # added by JFL
       - name: create env file
         run: |
-         touch x.env
-         echo TWILIO_ACCOUNT_SID=${{ secrets.TWILIO_ACCOUNT_SID }} >> x.env
-         echo TWILIO_API_KEY_SID=${{ secrets.TWILIO_API_KEY_SID }} >> x.env
-         echo TWILIO_API_KEY_SECRET=${{ secrets.TWILIO_API_KEY_SECRET }} >> x.env
-         echo TWILIO_AUTH_TOKEN=${{ secrets.TWILIO_AUTH_TOKEN }} >> x.env
-         echo REACT_APP_DISABLE_TWILIO_CONVERSATIONS=true >> x.env
+         touch .env
+         echo TWILIO_ACCOUNT_SID=${{ secrets.TWILIO_ACCOUNT_SID }} >> .env
+         echo TWILIO_API_KEY_SID=${{ secrets.TWILIO_API_KEY_SID }} >> .env
+         echo TWILIO_API_KEY_SECRET=${{ secrets.TWILIO_API_KEY_SECRET }} >> .env
+         echo TWILIO_AUTH_TOKEN=${{ secrets.TWILIO_AUTH_TOKEN }} >> .env
+         echo REACT_APP_DISABLE_TWILIO_CONVERSATIONS=true >> .env
       - name: build module 
         run: CI=false npm run build
         env:
