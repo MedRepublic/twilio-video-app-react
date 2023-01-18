@@ -26,6 +26,14 @@ jobs:
       - name: Install dependencies for the twilio function
         run: npm ci
       # added by JFL
+      - name: create env file
+      - run: |
+        touch .env
+        echo TWILIO_ACCOUNT_SID=${{ secrets.TWILIO_ACCOUNT_SID }} >> .env
+        echo TWILIO_API_KEY_SID=${{ secrets.TWILIO_API_KEY_SID }} >> .env
+        echo TWILIO_API_KEY_SECRET=${{ secrets.WILIO_API_KEY_SECRET }} >> .env
+        echo TWILIO_AUTH_TOKEN=${{ secrets.TWILIO_AUTH_TOKEN }} >> .env
+        echo REACT_APP_DISABLE_TWILIO_CONVERSATIONS=true >> .env
       - run: CI=false npm run build
       - name: rsync deployments
         uses: burnett01/rsync-deployments@5.1
