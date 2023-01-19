@@ -1,4 +1,4 @@
-# This is a basic workflow to publish a Twilio function with Github Actions
+# This is a basic workflow to publish Twilio Telehealth function with Github Actions
 
 name: Twilio CI
 
@@ -28,14 +28,16 @@ jobs:
       # added by JFL
       - name: create env file
         run: |
-         touch .env
-         echo TWILIO_ACCOUNT_SID=${{ secrets.TWILIO_ACCOUNT_SID }} >> .env
-         echo TWILIO_API_KEY_SID=${{ secrets.TWILIO_API_KEY_SID }} >> .env
-         echo TWILIO_API_KEY_SECRET=${{ secrets.TWILIO_API_KEY_SECRET }} >> .env
-         echo TWILIO_AUTH_TOKEN=${{ secrets.TWILIO_AUTH_TOKEN }} >> .env
-         echo REACT_APP_DISABLE_TWILIO_CONVERSATIONS=true >> .env
+         touch x.env
+         echo TWILIO_ACCOUNT_SID=${{ secrets.TWILIO_ACCOUNT_SID }} >> x.env
+         echo TWILIO_API_KEY_SID=${{ secrets.TWILIO_API_KEY_SID }} >> x.env
+         echo TWILIO_API_KEY_SECRET=${{ secrets.TWILIO_API_KEY_SECRET }} >> x.env
+         echo TWILIO_AUTH_TOKEN=${{ secrets.TWILIO_AUTH_TOKEN }} >> x.env
+         echo REACT_APP_DISABLE_TWILIO_CONVERSATIONS=true >> x.env
       - name: build module 
-        run: CI=false npm run build
+        run: cp x.env .env
+          ls -a
+          CI=false npm run build
         env:
          TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
          TWILIO_API_KEY_SID: ${{ secrets.TWILIO_API_KEY_SID }}
@@ -51,6 +53,4 @@ jobs:
           remote_host: ec2-50-18-145-191.us-west-1.compute.amazonaws.com
           remote_user: bitnami
           remote_key: "${{ secrets.SSH_PRIVATE_KEY }}"
-        # Install the Twilio CLI and the serverless plugin then deploy the function
-        # run: npm install twilio-cli -g && twilio plugins:install @twilio-labs/plugin-rtc && npm run deploy:twilio-cli -- --override
         
