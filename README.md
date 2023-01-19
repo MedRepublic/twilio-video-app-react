@@ -1,4 +1,4 @@
-# Twilio Video React App
+# Twilio Telehealth React App
 
 ## Prerequisites
 
@@ -6,6 +6,8 @@ You must have the following installed:
 
 - [Node.js v14+](https://nodejs.org/en/download/)
 - NPM v6+ (comes installed with newer Node versions)
+- PM2
+- Rsync (if using Actions to build on Github)
 
 You can check which versions of Node.js and NPM you currently have installed with the following commands:
 
