@@ -18,6 +18,8 @@ You can check which versions of Node.js and NPM you currently have installed wit
 
 Clone this repository and cd into the project directory:
 
+    sudo mkdir twilio-video-app-react
+    sudo chown <username> twilio-video-app-react
     git clone https://github.com/MedRepublic/twilio-video-app-react.git
     cd twilio-video-app-react
     git checkout developer
@@ -37,7 +39,7 @@ TWILIO_API_KEY_SECRET=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 TWILIO_AUTH_TOKEN=2XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 REACT_APP_DISABLE_TWILIO_CONVERSATIONS=true (If conversation need in app than comment this)
 
-All Twilio key is found in twilio console
+All Twilio keys are found in twilio console
 
 ## Run on local
 
