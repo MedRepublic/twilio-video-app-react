@@ -7,7 +7,7 @@ You must have the following installed:
 - [Node.js v14+](https://nodejs.org/en/download/)
 - NPM v6+ (comes installed with newer Node versions)
 - PM2
-- Rsync (if using Actions to build on Github)
+- Rsync (if using Twilio CI Action to build on Github and copy to server including .env creation)
 
 You can check which versions of Node.js and NPM you currently have installed with the following commands:
 
@@ -45,10 +45,6 @@ Run `npm start` inside the main project folder
 
 ## Run on production
 
-1. Change proxy url's port from 8081 to 3000 in package.json
-2. Run `npm run build`.
-3. Go inside server folder
-4. Change port from 8081 to 3000
-5. Run `pm2 start "npm run server"`
-
-Our project is run on live server, We can check to hit domain
+1. Run `npm run build`.
+2. Go inside server folder
+3. Run `pm2 start "npm run server"`
